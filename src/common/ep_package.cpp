@@ -45,9 +45,18 @@ int ep_package::parse_package()
 
 	long offset = 0;
 
-	// read ep_package info
-	uint32_t size = EP_VERSION_LENGTH;
+	// read ep_package sign
+	uint32_t size = EP_SIGN_LENGTH;
 	char* buf = new char[size];
+	ep_read(_package_dir.c_str(), offset, size, buf);
+	offset += size;
+	if (strcmp(buf, EP_PACKAGE_SIGN) != 0)
+		goto ERROR;
+	EP_SAFE_DELETE_ARR(buf);
+
+	// read ep_package info
+	size = EP_VERSION_LENGTH;
+	buf = new char[size];
 	ep_read(_package_dir.c_str(), offset, size, buf);
 	offset += size;
 	if (strcmp(buf, EP_VERSION) != 0)

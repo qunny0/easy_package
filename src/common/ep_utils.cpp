@@ -3,6 +3,8 @@
 #include <io.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <direct.h>
+#include <errno.h>
 
 int is_dir(const char* path)
 {
@@ -22,6 +24,20 @@ int dir_valid(const char* dir, int mode)
 	return 0;
 
 // 	SetEndOfFile()
+}
+
+int ep_mk_dir(const char* dir)
+{
+	if (_mkdir(dir) != 0)
+	{
+		printf("mkdir error %d\n.", errno);
+		if (errno == EEXIST)
+			;
+		else if (errno == ENOENT)
+			;
+		return -1;
+	}
+	return 0;
 }
 
 int ep_output_to_console(const char* format, va_list arglist)

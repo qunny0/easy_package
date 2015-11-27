@@ -11,6 +11,8 @@ extern int is_dir(const char* path);
 // F_OK 0	R_OK 2	W_OK 4	X_OK 6
 extern int dir_valid(const char* dir, int mode);
 
+extern int ep_mk_dir(const char* dir);
+
 extern int ep_read(const char* path, int offset, int size, char* out_buf);
 
 // mode : "a" "w"

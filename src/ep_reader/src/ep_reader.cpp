@@ -12,7 +12,6 @@ ep_reader* ep_reader::create_ep_reader(const char* package_dir)
 	}
 
 	reader->show_all_file_path();
-	reader->get_file_data_by_path("ba.txt");
 
 	return reader;
 }
@@ -63,4 +62,29 @@ void ep_reader::get_file_data_by_path(const char* file_dir)
 	}
 }
 
+int ep_reader::export_package(const char* export_dir)
+{
+	// to-do: verify export_dir valid ?
+
+	const std::string pkg_dir = _p_ep_package->get_package_dir();
+	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
+
+	std::string str_export_dir = export_dir;
+	for (EPFileEntityEx file_entity : v_file_info)
+	{
+		// read
+		char* buf = new char[file_entity.data_size + 1];
+		memset(buf, 0, file_entity.data_size + 1);
+		uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
+		ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, buf);
+		// write
+		std::string export_absolute_path = str_export_dir + "\\" + file_entity.relative_path;
+		std::string export_absolute_dir = export_absolute_path.substr(0, export_absolute_path.rfind('\\')+1);
+		ep_mk_dir(export_absolute_dir.c_str());
+		EP_WRITE(export_absolute_path.c_str(), EP_PACK_MODE_WRITE, 0, file_entity.data_size, buf);
+		EP_SAFE_DELETE_ARR(buf);
+	}
+
+	return 0;
+}
 

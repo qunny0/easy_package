@@ -81,9 +81,14 @@ int ep_writer::write_dir_to_package()
 
 	long offset = 0;
 
+	// package sign
+	printf("package sign...\n");
+	EP_WRITE(package_dir, EP_PACK_MODE_WRITE, offset, EP_SIGN_LENGTH, EP_PACKAGE_SIGN);
+	offset += EP_SIGN_LENGTH;
+
 	// version info
 	printf("package version information ...\n");
-	EP_WRITE(package_dir, EP_PACK_MODE_WRITE, offset, EP_VERSION_LENGTH, EP_VERSION);
+	EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, EP_VERSION_LENGTH, EP_VERSION);
 	offset += EP_VERSION_LENGTH;
 
 	// package header
