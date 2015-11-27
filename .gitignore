@@ -26,3 +26,16 @@
 *.exe
 *.out
 *.app
+
+# Custum
+*.sdf
+*.opensdf
+*.suo
+Intermediate
+Output
+
+# log file
+*.tlog
+
+# link file
+*.ilk
