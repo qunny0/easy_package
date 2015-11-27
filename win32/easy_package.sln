@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "easy_package", "easy_package\easy_package.vcxproj", "{EEBD2A76-4CFB-4997-BB17-D86F0F1F2F36}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C8DB9B8B-B83D-4BF9-BD15-5847805F96EE} = {C8DB9B8B-B83D-4BF9-BD15-5847805F96EE}
+		{70E141A1-4F00-41DA-8BA4-EA2019D88FDF} = {70E141A1-4F00-41DA-8BA4-EA2019D88FDF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ep_writer", "ep_writer\ep_writer.vcxproj", "{70E141A1-4F00-41DA-8BA4-EA2019D88FDF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ep_reader", "ep_reader\ep_reader.vcxproj", "{C8DB9B8B-B83D-4BF9-BD15-5847805F96EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EEBD2A76-4CFB-4997-BB17-D86F0F1F2F36}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EEBD2A76-4CFB-4997-BB17-D86F0F1F2F36}.Debug|Win32.Build.0 = Debug|Win32
+		{EEBD2A76-4CFB-4997-BB17-D86F0F1F2F36}.Release|Win32.ActiveCfg = Release|Win32
+		{EEBD2A76-4CFB-4997-BB17-D86F0F1F2F36}.Release|Win32.Build.0 = Release|Win32
+		{70E141A1-4F00-41DA-8BA4-EA2019D88FDF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{70E141A1-4F00-41DA-8BA4-EA2019D88FDF}.Debug|Win32.Build.0 = Debug|Win32
+		{70E141A1-4F00-41DA-8BA4-EA2019D88FDF}.Release|Win32.ActiveCfg = Release|Win32
+		{70E141A1-4F00-41DA-8BA4-EA2019D88FDF}.Release|Win32.Build.0 = Release|Win32
+		{C8DB9B8B-B83D-4BF9-BD15-5847805F96EE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C8DB9B8B-B83D-4BF9-BD15-5847805F96EE}.Debug|Win32.Build.0 = Debug|Win32
+		{C8DB9B8B-B83D-4BF9-BD15-5847805F96EE}.Release|Win32.ActiveCfg = Release|Win32
+		{C8DB9B8B-B83D-4BF9-BD15-5847805F96EE}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
