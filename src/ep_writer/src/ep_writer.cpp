@@ -1,6 +1,7 @@
 #include "ep_writer.h"
 #include "ep_utils.h"
 #include <io.h>
+#include <time.h>
 
 ep_writer::ep_writer()
 {
@@ -24,8 +25,13 @@ int ep_writer::package_dir(const char* pkg_dir, const char* file_dir, const char
 	if (analyze_dir(file_dir) != 0)
 		return -1;
 
+	time_t pre_time, aft_time;
+	time(&pre_time);
 	if (write_dir_to_package() != 0)
 		return -1;
+	time(&aft_time);
+	uint32_t dif_time = uint32_t(aft_time - pre_time);
+	printf("package cost %d s.\n", dif_time);
 
 	return 0;
 }
@@ -76,17 +82,22 @@ int ep_writer::write_dir_to_package()
 	long offset = 0;
 
 	// version info
+	printf("package version information ...\n");
 	EP_WRITE(package_dir, EP_PACK_MODE_WRITE, offset, EP_VERSION_LENGTH, EP_VERSION);
 	offset += EP_VERSION_LENGTH;
 
 	// package header
+	printf("package header ...\n");
 	EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, sizeof(EPHeader), (char *)&_p_ep_package->_ep_header);
 	offset += sizeof(EPHeader);
 
 	// file data
 	const unsigned int ep_file_entity_size = sizeof(EPFileEntity);
+	int index = 0;
 	for (EPFileEntityEx file_entity : v_ep_files)
 	{
+		printf("package file[%d] %s ...\n", index++, file_entity.relative_path);
+
 		file_entity.offset = offset;
 
 		// EPFileEntityEx	-- EPFileEntity Information

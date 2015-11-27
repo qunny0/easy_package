@@ -94,10 +94,6 @@ int ep_package::parse_package()
 		offset += file_entity_ex.data_size;
 	}
 
-// 	for (EPFileEntityEx file_entity : _v_ep_files)
-// 	{
-// 		printf("file relative path : %s \n", file_entity.relative_path);
-// 	}
 	return 0;
 ERROR:
 	EP_SAFE_DELETE_ARR(buf);

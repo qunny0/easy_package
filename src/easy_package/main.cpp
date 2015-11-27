@@ -6,6 +6,9 @@
 //	pack C:\Users\qunny\Desktop\ep_temp.ep C:\Users\qunny\Desktop\rick04-1116\baoji_buff w
 // parse C:\Users\qunny\Desktop\ep_temp.ep
 
+// pack C:\Users\Administrator\Desktop\ep_test.ep E:\Work\FuBeiProject\Parkour\Run\client\iPhone\armatures w
+// parse C:\Users\Administrator\Desktop\ep_test.ep
+
 void help()
 {
 	printf("input valid!\n");

@@ -31,6 +31,7 @@
 *.sdf
 *.opensdf
 *.suo
+*.user
 Intermediate
 Output
 
