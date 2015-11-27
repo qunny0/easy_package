@@ -27,7 +27,7 @@
 *.out
 *.app
 
-# Custum
+# Custom
 *.sdf
 *.opensdf
 *.suo
