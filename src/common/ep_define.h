@@ -60,11 +60,9 @@ typedef struct EPFileEntityEx : public EPFileEntity
 
 struct IEP_READER 
 {
-// 	virtual int read_from_file(const char* path, int size, char* out_buf) = 0;
-// 
-// 	virtual int read_from_package(int offset, int size, char* out_buf) = 0;
-// 
-// 	virtual int ep_read(const char* path, int offset, int size, char* out_buf) = 0;
+	virtual bool file_exist(const char* file_path) = 0;
+
+	virtual uint32_t get_file_data(const char* file_path, char** buf) = 0;
 
 	virtual int export_package(const char* export_dir) = 0;
 };

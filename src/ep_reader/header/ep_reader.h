@@ -9,15 +9,19 @@ public:
 
 	virtual int export_package(const char* export_dir);
 
-	void show_all_file_path() const;
+	virtual bool file_exist(const char* file_path);
 
-	void get_file_data_by_path(const char* file_dir);
+	virtual uint32_t get_file_data(const char* file_path, char** buf);
 
 protected:
 	ep_reader();
 	~ep_reader();
 
 	bool init(const char* pkg_dir);
+
+	void show_all_file_path() const;
+
+	void print_file_data_by_path(const char* file_dir);
 
 private:
 	ep_package*		_p_ep_package;

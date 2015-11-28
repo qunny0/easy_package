@@ -42,7 +42,7 @@ void ep_reader::show_all_file_path() const
 	}
 }
 
-void ep_reader::get_file_data_by_path(const char* file_dir)
+void ep_reader::print_file_data_by_path(const char* file_dir)
 {
 	const std::string pkg_dir = _p_ep_package->get_package_dir();
 	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
@@ -51,8 +51,7 @@ void ep_reader::get_file_data_by_path(const char* file_dir)
 	{
 		if (strcmp(file_entity.relative_path, file_dir) == 0)
 		{
-			char* buf = new char[file_entity.data_size + 1];
-			memset(buf, 0, file_entity.data_size + 1);
+			char* buf = nullptr;
 			uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
 			ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, buf);
 			printf("%s data : %s \n", file_dir, buf);
@@ -70,13 +69,14 @@ int ep_reader::export_package(const char* export_dir)
 	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
 
 	std::string str_export_dir = export_dir;
+	int index = 0;
 	for (EPFileEntityEx file_entity : v_file_info)
 	{
+		printf("export file[%d] %s ...\n", index++, file_entity.relative_path);
+
 		// read
-		char* buf = new char[file_entity.data_size + 1];
-		memset(buf, 0, file_entity.data_size + 1);
-		uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
-		ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, buf);
+		char* buf = nullptr;
+		uint32_t data_size = get_file_data(file_entity.relative_path, &buf);
 		// write
 		std::string export_absolute_path = str_export_dir + "\\" + file_entity.relative_path;
 		std::string export_absolute_dir = export_absolute_path.substr(0, export_absolute_path.rfind('\\')+1);
@@ -88,3 +88,37 @@ int ep_reader::export_package(const char* export_dir)
 	return 0;
 }
 
+bool ep_reader::file_exist(const char* file_path)
+{
+	// to-do: optimize
+	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
+
+	for (EPFileEntityEx file_entity : v_file_info)
+	{
+		if (strcmp(file_entity.relative_path, file_path) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+uint32_t ep_reader::get_file_data(const char* file_path, char** buf)
+{
+	const std::string pkg_dir = _p_ep_package->get_package_dir();
+	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
+	for (EPFileEntityEx file_entity : v_file_info)
+	{
+		if (strcmp(file_entity.relative_path, file_path) == 0)
+		{
+			*buf = new char[file_entity.data_size+1];
+			memset(*buf, 0, file_entity.data_size+1);
+			uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
+			ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, *buf);
+			return file_entity.data_size;
+		}
+	}
+
+	return 0;
+}
