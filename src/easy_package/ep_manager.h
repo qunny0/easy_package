@@ -15,6 +15,9 @@ public:
 
 	int package_export(const char* package_dir, const char* export_dir);
 
+	//
+	void test();
+
 private:
 	IEP_READER*					_reader;
 	IEP_WRITER*					_ep_writer;

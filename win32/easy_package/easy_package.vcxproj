@@ -43,15 +43,15 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\Output\</OutDir>
     <IntDir>$(SolutionDir)\Intermediate\$(ProjectName)_$(Configuration)\</IntDir>
-    <IncludePath>../../src/common/;../../src/ep_reader/header/;../../src/ep_writer/header/;$(IncludePath)</IncludePath>
-    <LibraryPath>../../lib/win32/Debug/;$(LibraryPath)</LibraryPath>
+    <IncludePath>../../src/common/;../../src/ep_reader/header/;../../src/ep_writer/header/;../../external/zlib/header/;$(IncludePath)</IncludePath>
+    <LibraryPath>../../lib/win32/Debug/;../../external/zlib/lib/debug/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\Output\</OutDir>
     <IntDir>$(SolutionDir)\Intermediate\$(ProjectName)_$(Configuration)\</IntDir>
-    <IncludePath>../../src/common/;../../src/ep_reader/header/;../../src/ep_writer/header/;$(IncludePath)</IncludePath>
-    <LibraryPath>../../lib/win32/Release/;$(LibraryPath)</LibraryPath>
+    <IncludePath>../../src/common/;../../src/ep_reader/header/;../../src/ep_writer/header/;../../external/zlib/header/;$(IncludePath)</IncludePath>
+    <LibraryPath>../../lib/win32/Release/;../../external/zlib/lib/release/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -59,12 +59,12 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;ZLIB_WINAPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ep_reader.lib;ep_writer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ep_reader.lib;ep_writer.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -82,6 +82,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ep_reader.lib;ep_writer.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

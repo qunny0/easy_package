@@ -22,6 +22,8 @@ extern int ep_clear_file(const char* path);
 
 extern void ep_output(const char* format, ...);
 
+extern void ep_compress();
+
 // to-do
 // 1. 可变参数，获取各个参数 va_list
 

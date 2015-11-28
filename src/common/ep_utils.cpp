@@ -7,6 +7,8 @@
 #include <direct.h>
 #include <errno.h>
 
+#include "zlib.h"
+
 int is_dir(const char* path)
 {
 	struct stat buf;
@@ -69,18 +71,18 @@ void ep_output(const char* format, ...)
 int ep_read(const char* path, int offset, int size, char* out_buf)
 {
 	FILE* file = fopen(path, "rb");
-	if (!file) goto ERROR;
+	if (!file) goto EP_ERROR;
 
 	int ret = fseek(file, offset, SEEK_SET);
-	if (ret != 0) goto ERROR;
+	if (ret != 0) goto EP_ERROR;
 
 	int numread = fread(out_buf, sizeof(char), size, file);
-	if (numread != size) goto ERROR;
+	if (numread != size) goto EP_ERROR;
 
 	fclose(file);
 	return 0;
 
-ERROR:
+EP_ERROR:
 	if (file) fclose(file);
 	return -1;
 }
@@ -89,20 +91,20 @@ extern int ep_write(const char* path, const char* mode, long offset, int size, c
 {
 	FILE* file = fopen(path, mode);
 	if (!file)
-		goto ERROR;
+		goto EP_ERROR;
 
 	int ret = fseek(file, offset, SEEK_SET);
 	if (ret != 0)
-		goto ERROR;
+		goto EP_ERROR;
 
 	unsigned int numwrite = fwrite(in_buf, 1, size, file);
 	if (numwrite != size)
-		goto ERROR;
+		goto EP_ERROR;
 
 	fclose(file);
 	return 0;
 
-ERROR:
+EP_ERROR:
 	if (file)
 	{
 		fclose(file);

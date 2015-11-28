@@ -3,6 +3,8 @@
 #include <io.h>
 #include <time.h>
 
+#include "zlib.h"
+
 ep_writer::ep_writer()
 {
 
@@ -124,4 +126,9 @@ int ep_writer::write_dir_to_package()
 	}
 
 	return 0;
+}
+
+void ep_compress()
+{
+// 	compress()
 }

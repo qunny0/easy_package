@@ -49,10 +49,12 @@ typedef struct EPFileEntity
 typedef struct EPFileEntityEx : public EPFileEntity
 {
 	char		relative_path[EP_MAX_PATH];
+	bool		b_delete_flag;
 	
 	EPFileEntityEx() : EPFileEntity()
 	{
 		memset(relative_path, 0, EP_MAX_PATH);
+		b_delete_flag = false;
 	}
 }EPFileEntityEx;
 

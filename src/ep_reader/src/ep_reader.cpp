@@ -20,7 +20,6 @@ ep_reader::ep_reader()
 {
 }
 
-
 ep_reader::~ep_reader()
 {
 }
@@ -28,7 +27,6 @@ ep_reader::~ep_reader()
 bool ep_reader::init(const char* pkg_dir)
 {
 	_p_ep_package = ep_package::create_package(pkg_dir);
-
 	return _p_ep_package != nullptr;
 }
 
