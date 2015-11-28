@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <io.h>
 #include <stdio.h>
+#include <string>
 #include <stdarg.h>
 #include <direct.h>
 #include <errno.h>
@@ -28,15 +29,27 @@ int dir_valid(const char* dir, int mode)
 
 int ep_mk_dir(const char* dir)
 {
-	if (_mkdir(dir) != 0)
+	// to-do: optimize
+	std::string str_dir = dir;
+
+	// dir exist
+	if (is_dir(str_dir.c_str()) == 0)
 	{
-		printf("mkdir error %d\n.", errno);
-		if (errno == EEXIST)
-			;
-		else if (errno == ENOENT)
-			;
-		return -1;
+		return 0;
 	}
+	else
+	{
+		std::string str_parent_dir = str_dir.substr(0, str_dir.rfind('\\'));
+		ep_mk_dir(str_parent_dir.c_str());
+		if (_mkdir(str_dir.c_str()) != 0)
+		{
+			if (errno == EEXIST)
+				return 0;
+			else if (errno == ENOENT)
+				return 1;
+		}
+	}
+
 	return 0;
 }
 
