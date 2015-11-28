@@ -20,12 +20,12 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
 *.out
 *.app
+
 
 # Custom
 *.sdf
@@ -34,6 +34,8 @@
 *.user
 Intermediate
 Output
+ep_reader.lib
+ep_writer.lib
 
 # log file
 *.tlog
