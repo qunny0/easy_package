@@ -56,6 +56,12 @@ void ep_manager::show_tips()
 
 int ep_manager::package(const char* package_dir, const char* dir, const char* mode)
 {
+	if (dir_valid(package_dir, 0) == 0)
+	{
+		printf("%s exist!\n", package_dir);
+		return -1;
+	}
+
 	return _ep_writer->package_dir(package_dir, dir, mode[0]);
 }
 
@@ -73,35 +79,6 @@ int ep_manager::package_export(const char* package_dir, const char* export_dir)
 	_reader->export_package(export_dir);
 
 	return 0;
-}
-
-void ep_manager::test()
-{
-	char test_path[] = "C:\\Users\\Administrator\\Desktop\\export\\test.txt";
-
-	_finddata_t findData;
-	if (_findfirst(test_path, &findData))
-	{
-		uint32_t file_size = findData.size + 1;
-		char* buf = new char[file_size];
-		memset(buf, 0, file_size);
-		ep_read(test_path, 0, file_size, buf);
-		
-		Byte* dest_buf = nullptr;
-		uLongf dest_size = compressBound(file_size);
-		dest_buf = new Byte[dest_size];
-		int ret = compress(dest_buf, &dest_size, (Bytef*)buf, file_size);
-
-		Bytef* un_dest_buf = new Bytef[file_size];
-		unsigned long un_dest_size = file_size;
-		ret = uncompress(un_dest_buf, &un_dest_size, (Bytef*)dest_buf, dest_size);
-
-		if (ret == 0)
-		{
-			printf("sha");
-			return;
-		}
-	}
 }
 
 // printf("hash size: %d\n", _map_test_hash.size());

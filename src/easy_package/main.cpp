@@ -12,10 +12,6 @@ int main(int argc, char* argv[])
 {
 	ep_manager manager;
 
-// 	manager.analyze_dir("D:\\Game");
-// 	system("pause");
-// 	return 0;
-
 	if (argc == 1)
 	{
 		manager.show_tips();

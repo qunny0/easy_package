@@ -17,9 +17,6 @@ public:
 
 	void show_tips();
 
-	//
-	void test();
-
 // 	int analyze_dir(const std::string dir);
 
 private:

@@ -124,7 +124,7 @@ uint32_t ep_reader::get_file_data(const char* file_path, char** buf)
 
 			if (dest_len != file_entity.source_data_size)
 			{
-				printf("haha error");
+				printf("error");
 			}
 
 			EP_SAFE_DELETE_ARR(compressed_buf);
