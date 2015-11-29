@@ -33,6 +33,7 @@ int ep_writer::package_dir(const char* pkg_dir, const char* file_dir, const char
 		return -1;
 	time(&aft_time);
 	uint32_t dif_time = uint32_t(aft_time - pre_time);
+
 	printf("package cost %d s.\n", dif_time);
 
 	return 0;
@@ -130,9 +131,7 @@ int ep_writer::write_dir_to_package()
 
 		EP_SAFE_DELETE_ARR(dest_buf);
 
-// 		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, file_entity.data_size, buf_data);
 		offset += file_entity.compressed_data_size;
-
 	}
 
 	return 0;

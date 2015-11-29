@@ -15,8 +15,12 @@ public:
 
 	int package_export(const char* package_dir, const char* export_dir);
 
+	void show_tips();
+
 	//
 	void test();
+
+// 	int analyze_dir(const std::string dir);
 
 private:
 	IEP_READER*					_reader;

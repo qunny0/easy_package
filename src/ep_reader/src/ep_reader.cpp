@@ -34,7 +34,7 @@ bool ep_reader::init(const char* pkg_dir)
 void ep_reader::show_all_file_path() const
 {
 	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
-	
+
 	for (EPFileEntityEx file_entity : v_file_info)
 	{
 		printf("file relative path : %s \n", file_entity.relative_path);
@@ -63,7 +63,6 @@ void ep_reader::print_file_data_by_path(const char* file_dir)
 int ep_reader::export_package(const char* export_dir)
 {
 	// to-do: verify export_dir valid ?
-
 	const std::string pkg_dir = _p_ep_package->get_package_dir();
 	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
 

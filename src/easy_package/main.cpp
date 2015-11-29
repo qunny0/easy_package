@@ -4,55 +4,47 @@
 #define COMMAND_PARSE	"parse"
 #define COMMAND_EXPORT	"export"
 
-//	pack C:\Users\qunny\Desktop\ep_temp.ep C:\Users\qunny\Desktop\rick04-1116\baoji_buff w
-// parse C:\Users\qunny\Desktop\ep_temp.ep
-
 // pack C:\Users\Administrator\Desktop\ep_test.ep E:\Work\FuBeiProject\Parkour\Run\client\iPhone\armatures w
 // parse C:\Users\Administrator\Desktop\ep_test.ep
 // export C:\Users\Administrator\Desktop\ep_test.ep C:\Users\Administrator\Desktop\export
-
-void help()
-{
-	printf("input valid!\n");
-		char tips[] = "pack \t[package dir]\t [dir] [a,w]\n \
-parse \t[package dir]\t \
-export \t[package dir] \t[export dir]" ;
-
-	printf("tips:\n %s \n", tips);
-}
 
 int main(int argc, char* argv[])
 {
 	ep_manager manager;
 
+// 	manager.analyze_dir("D:\\Game");
+// 	system("pause");
+// 	return 0;
+
 	if (argc == 1)
 	{
-		goto ERROR;
+		manager.show_tips();
 	}
 
 	const char* command = argv[1];
+	int ret = 0;
 	if (strcmp(command, COMMAND_PACK) == 0)
 	{
-		manager.package(argv[2], argv[3], argv[4]);
+		ret = manager.package(argv[2], argv[3], argv[4]);
 	}
 	else if (strcmp(command, COMMAND_PARSE) == 0)
 	{
-		manager.parse_package(argv[2]);
+		ret = manager.parse_package(argv[2]);
 	}
 	else if (strcmp(command, COMMAND_EXPORT) == 0)
 	{
-		manager.package_export(argv[2], argv[3]);
+		ret = manager.package_export(argv[2], argv[3]);
 	}
 	else
 	{
-		goto ERROR;
+		manager.show_tips();
 	}
 
-	system("pause");
-	return 0;
+	if (ret != 0)
+	{
+		printf("success!");
+	}
 
-ERROR:
-	help();
 	system("pause");
 	return 0;
 }
