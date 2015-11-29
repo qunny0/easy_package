@@ -72,7 +72,7 @@ void ep_writer::new_a_file_entity(const char* file_relative_path, const uint32_t
 	EPFileEntityEx file_entity;
 	file_entity.relative_path_size = strlen(file_relative_path);
 	strncpy(file_entity.relative_path, file_relative_path, file_entity.relative_path_size);
-	file_entity.data_size = file_size;
+	file_entity.source_data_size = file_size;
 	_p_ep_package->_v_ep_files.push_back(file_entity);
 }
 
@@ -105,7 +105,18 @@ int ep_writer::write_dir_to_package()
 	{
 		printf("package file[%d] %s ...\n", index++, file_entity.relative_path);
 
+		char* src_data = new char[file_entity.source_data_size];
+		std::string file_absolute_path = _file_root_dir + "\\" + file_entity.relative_path;
+		ep_read(file_absolute_path.c_str(), 0, file_entity.source_data_size, src_data);
+
+		// calculate compress data
+		uLongf dest_len = compressBound(file_entity.source_data_size);
+		Bytef* dest_buf = new Bytef[dest_len];
+		compress(dest_buf, &dest_len, (Bytef*)src_data, file_entity.source_data_size);
+		EP_SAFE_DELETE_ARR(src_data);
+
 		file_entity.offset = offset;
+		file_entity.compressed_data_size = dest_len;
 
 		// EPFileEntityEx	-- EPFileEntity Information
 		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, ep_file_entity_size, (char*)&file_entity);
@@ -115,14 +126,13 @@ int ep_writer::write_dir_to_package()
 		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, file_entity.relative_path_size, file_entity.relative_path);
 		offset += file_entity.relative_path_size;
 
-		// EPFileEntityEx	-- file_data
-		char* buf_data = new char[file_entity.data_size];
-		std::string file_absolute_path = _file_root_dir + "\\" + file_entity.relative_path;
-		ep_read(file_absolute_path.c_str(), 0, file_entity.data_size, buf_data);
-		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, file_entity.data_size, buf_data);
-		offset += file_entity.data_size;
+		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, dest_len, (char*)dest_buf);
 
-		EP_SAFE_DELETE_ARR(buf_data);
+		EP_SAFE_DELETE_ARR(dest_buf);
+
+// 		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, file_entity.data_size, buf_data);
+		offset += file_entity.compressed_data_size;
+
 	}
 
 	return 0;

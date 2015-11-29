@@ -68,7 +68,7 @@ void ep_output(const char* format, ...)
 	va_end(args);
 }
 
-int ep_read(const char* path, int offset, int size, char* out_buf)
+int ep_read(const char* path, unsigned long offset, unsigned long size, char* out_buf)
 {
 	FILE* file = fopen(path, "rb");
 	if (!file) goto EP_ERROR;
@@ -87,7 +87,7 @@ EP_ERROR:
 	return -1;
 }
 
-extern int ep_write(const char* path, const char* mode, long offset, int size, const char* in_buf)
+int ep_write(const char* path, const char* mode, unsigned long offset, unsigned long size, const char* in_buf)
 {
 	FILE* file = fopen(path, mode);
 	if (!file)
@@ -112,7 +112,7 @@ EP_ERROR:
 	return -1;
 }
 
-extern int ep_clear_file(const char* path)
+int ep_clear_file(const char* path)
 {
 	FILE* file = fopen(path, "w");
 	if (!file)
@@ -121,4 +121,9 @@ extern int ep_clear_file(const char* path)
 	}
 	fclose(file);
 	return 0;
+}
+
+void ep_compress(char* dest_buf, unsigned long* dest_size, const char* src_buf, unsigned long src_len)
+{
+
 }

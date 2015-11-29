@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "ep_utils.h"
+#include "zlib.h"
 
 ep_reader* ep_reader::create_ep_reader(const char* package_dir)
 {
@@ -49,11 +50,11 @@ void ep_reader::print_file_data_by_path(const char* file_dir)
 	{
 		if (strcmp(file_entity.relative_path, file_dir) == 0)
 		{
-			char* buf = nullptr;
-			uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
-			ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, buf);
-			printf("%s data : %s \n", file_dir, buf);
-			EP_SAFE_DELETE_ARR(buf);
+// 			char* buf = nullptr;
+// 			uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
+// 			ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, buf);
+// 			printf("%s data : %s \n", file_dir, buf);
+// 			EP_SAFE_DELETE_ARR(buf);
 			break;
 		}
 	}
@@ -79,7 +80,7 @@ int ep_reader::export_package(const char* export_dir)
 		std::string export_absolute_path = str_export_dir + "\\" + file_entity.relative_path;
 		std::string export_absolute_dir = export_absolute_path.substr(0, export_absolute_path.rfind('\\')+1);
 		ep_mk_dir(export_absolute_dir.c_str());
-		EP_WRITE(export_absolute_path.c_str(), EP_PACK_MODE_WRITE, 0, file_entity.data_size, buf);
+ 		EP_WRITE(export_absolute_path.c_str(), EP_PACK_MODE_WRITE, 0, data_size, buf);
 		EP_SAFE_DELETE_ARR(buf);
 	}
 
@@ -110,11 +111,26 @@ uint32_t ep_reader::get_file_data(const char* file_path, char** buf)
 	{
 		if (strcmp(file_entity.relative_path, file_path) == 0)
 		{
-			*buf = new char[file_entity.data_size+1];
-			memset(*buf, 0, file_entity.data_size+1);
+			*buf = new char[file_entity.source_data_size+1];
+			memset(*buf, 0, file_entity.source_data_size + 1);
+
+			char* compressed_buf = new char[file_entity.compressed_data_size];
+			memset(compressed_buf, 0, file_entity.compressed_data_size);
+
 			uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
-			ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, *buf);
-			return file_entity.data_size;
+			ep_read(pkg_dir.c_str(), data_offset, file_entity.compressed_data_size, compressed_buf);
+
+			uLongf dest_len = file_entity.source_data_size+1;
+			uncompress((Bytef*)*buf, &dest_len, (Bytef*)compressed_buf, file_entity.compressed_data_size);
+
+			if (dest_len != file_entity.source_data_size)
+			{
+				printf("haha error");
+			}
+
+			EP_SAFE_DELETE_ARR(compressed_buf);
+
+			return file_entity.source_data_size;
 		}
 	}
 

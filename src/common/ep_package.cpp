@@ -1,5 +1,6 @@
 #include "ep_package.h"
 #include "ep_utils.h"
+#include "zlib.h"
 #include <io.h>
 
 ep_package* ep_package::create_package(const char* package_dir)
@@ -41,9 +42,9 @@ int ep_package::parse_package()
 {
 	_finddata_t findData;
 	_findfirst(_package_dir.c_str(), &findData);
-	long package_size = findData.size;
+	unsigned long package_size = findData.size;
 
-	long offset = 0;
+	unsigned long offset = 0;
 
 	// read ep_package sign
 	uint32_t size = EP_SIGN_LENGTH;
@@ -51,7 +52,7 @@ int ep_package::parse_package()
 	ep_read(_package_dir.c_str(), offset, size, buf);
 	offset += size;
 	if (strcmp(buf, EP_PACKAGE_SIGN) != 0)
-		goto ERROR;
+		goto EP_ERROR;
 	EP_SAFE_DELETE_ARR(buf);
 
 	// read ep_package info
@@ -60,7 +61,7 @@ int ep_package::parse_package()
 	ep_read(_package_dir.c_str(), offset, size, buf);
 	offset += size;
 	if (strcmp(buf, EP_VERSION) != 0)
-		goto ERROR;
+		goto EP_ERROR;
 	EP_SAFE_DELETE_ARR(buf);
 
 	// ep_header
@@ -80,13 +81,14 @@ int ep_package::parse_package()
 
 		// EPFileEntityEx		-- EPFileEntity
 		if (ep_read(_package_dir.c_str(), offset, file_entity_size, buf) != 0){
-			break; goto ERROR;
+			break; goto EP_ERROR;
 		}
 		EPFileEntityEx file_entity_ex;
 		EPFileEntity* p_file_entity = (EPFileEntity*)buf;
 		file_entity_ex.offset = p_file_entity->offset;
 		file_entity_ex.relative_path_size = p_file_entity->relative_path_size;
-		file_entity_ex.data_size = p_file_entity->data_size;
+		file_entity_ex.source_data_size = p_file_entity->source_data_size;
+		file_entity_ex.compressed_data_size = p_file_entity->compressed_data_size;
 		//
 		offset += file_entity_size;
 		EP_SAFE_DELETE_ARR(buf);
@@ -94,17 +96,17 @@ int ep_package::parse_package()
 		// EPFileEntityEx		-- EPFileEntity
 		buf = new char[file_entity_ex.relative_path_size];
 		if (ep_read(_package_dir.c_str(), offset, file_entity_ex.relative_path_size, buf) != 0) {
-			break; goto ERROR;
+			break; goto EP_ERROR;
 		}
 		strncpy(file_entity_ex.relative_path, buf, file_entity_ex.relative_path_size);
 		_v_ep_files.push_back(file_entity_ex);
 		// 
 		offset += file_entity_ex.relative_path_size;
-		offset += file_entity_ex.data_size;
+		offset += file_entity_ex.compressed_data_size;
 	}
 
 	return 0;
-ERROR:
+EP_ERROR:
 	EP_SAFE_DELETE_ARR(buf);
 	return -1;
 }

@@ -36,13 +36,6 @@ int ep_manager::parse_package(const char* package_path)
 
 int ep_manager::package_export(const char* package_dir, const char* export_dir)
 {
-	test();
-
-	return 0;
-// 	ep_mk_dir("C:\\Users\\Administrator\\Desktop\\export\\Test");
-// 
-// 	return 0;
-
 	parse_package(package_dir);
 
 	_reader->export_package(export_dir);
@@ -78,3 +71,4 @@ void ep_manager::test()
 		}
 	}
 }
+

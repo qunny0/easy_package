@@ -42,12 +42,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)..\lib\win32\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\Intermediate\$(ProjectName)_$(Configuration)\</IntDir>
-    <IncludePath>..\..\src\ep_reader\header\;..\..\src\common\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\src\ep_reader\header\;..\..\src\common\;../../external/zlib/header/;$(IncludePath)</IncludePath>
+    <LibraryPath>../../external/zlib/lib/debug/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(SolutionDir)\Intermediate\$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\lib\win32\$(Configuration)\</OutDir>
-    <IncludePath>..\..\src\ep_reader\header\;..\..\src\common\;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\src\ep_reader\header\;..\..\src\common\;../../external/zlib/header/;$(IncludePath)</IncludePath>
+    <LibraryPath>../../external/zlib/lib/release/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -55,7 +57,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;ZLIB_WINAPI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

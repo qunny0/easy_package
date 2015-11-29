@@ -28,7 +28,7 @@ typedef struct EPHeader
 
 	EPHeader()
 	{
-		compressed = 0;
+		compressed = 1;
 	}
 }EPHeader;
 
@@ -36,13 +36,15 @@ typedef struct EPFileEntity
 {
 	uint32_t	offset;
 	uint16_t	relative_path_size;
-	uint32_t	data_size;
+	uint32_t	source_data_size;
+	uint32_t	compressed_data_size;
 
 	EPFileEntity() 
 	{
 		offset = 0;
 		relative_path_size = 0;
-		data_size = 0;
+		source_data_size = 0;
+		compressed_data_size = 0;
 	}
 }EPFileEntity;
 
