@@ -1,7 +1,8 @@
 #pragma once
 #include "ep_define.h"
-#include "ep_package.h"
 #include <string>
+
+class ep_package;
 
 class ep_writer : public IEP_WRITER
 {

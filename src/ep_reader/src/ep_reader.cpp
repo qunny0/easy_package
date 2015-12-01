@@ -1,8 +1,9 @@
 #include "ep_reader.h"
-#include <vector>
-#include <string>
+#include "ep_package.h"
 #include "ep_utils.h"
 #include "zlib.h"
+#include <vector>
+#include <string>
 
 ep_reader* ep_reader::create_ep_reader(const char* package_dir)
 {
@@ -33,54 +34,62 @@ bool ep_reader::init(const char* pkg_dir)
 
 void ep_reader::show_all_file_path() const
 {
-	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
-
-	for (EPFileEntityEx file_entity : v_file_info)
+	MAP_EP_FILE_ENTITY_EX map_file_info = _p_ep_package->get_ep_file_info();
+	
+	MAP_EP_FILE_ENTITY_EX_ITERATOR it = map_file_info.begin();
+	MAP_EP_FILE_ENTITY_EX_CONST_ITERATOR it_end = map_file_info.end();
+	while (it != it_end)
 	{
-		printf("file relative path : %s \n", file_entity.relative_path);
+		printf("file relative path : %s \n", it->second.relative_path);
+		++it;
 	}
 }
 
 void ep_reader::print_file_data_by_path(const char* file_dir)
 {
-	const std::string pkg_dir = _p_ep_package->get_package_dir();
-	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
-
-	for (EPFileEntityEx file_entity : v_file_info)
-	{
-		if (strcmp(file_entity.relative_path, file_dir) == 0)
-		{
+// 	const std::string pkg_dir = _p_ep_package->get_package_dir();
+// 	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
+// 
+// 	for (EPFileEntityEx file_entity : v_file_info)
+// 	{
+// 		if (strcmp(file_entity.relative_path, file_dir) == 0)
+// 		{
 // 			char* buf = nullptr;
 // 			uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
 // 			ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, buf);
 // 			printf("%s data : %s \n", file_dir, buf);
 // 			EP_SAFE_DELETE_ARR(buf);
-			break;
-		}
-	}
+// 			break;
+// 		}
+// 	}
 }
 
 int ep_reader::export_package(const char* export_dir)
 {
 	// to-do: verify export_dir valid ?
 	const std::string pkg_dir = _p_ep_package->get_package_dir();
-	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
+
+	MAP_EP_FILE_ENTITY_EX map_file_info = _p_ep_package->get_ep_file_info();
+	MAP_EP_FILE_ENTITY_EX_ITERATOR it = map_file_info.begin();
+	MAP_EP_FILE_ENTITY_EX_CONST_ITERATOR it_end = map_file_info.end();
 
 	std::string str_export_dir = export_dir;
 	int index = 0;
-	for (EPFileEntityEx file_entity : v_file_info)
+	while (it != it_end)
 	{
-		printf("export file[%d] %s ...\n", index++, file_entity.relative_path);
+		printf("export file[%d] %s ...\n", index++, it->second.relative_path);
 
 		// read
 		char* buf = nullptr;
-		uint32_t data_size = get_file_data(file_entity.relative_path, &buf);
+		uint32_t data_size = get_file_data_from_package(it->second.relative_path, &buf);
 		// write
-		std::string export_absolute_path = str_export_dir + "\\" + file_entity.relative_path;
-		std::string export_absolute_dir = export_absolute_path.substr(0, export_absolute_path.rfind('\\')+1);
+		std::string export_absolute_path = str_export_dir + "\\" + it->second.relative_path;
+		std::string export_absolute_dir = export_absolute_path.substr(0, export_absolute_path.rfind('\\') + 1);
 		ep_mk_dir(export_absolute_dir.c_str());
- 		EP_WRITE(export_absolute_path.c_str(), EP_PACK_MODE_WRITE, 0, data_size, buf);
+		EP_WRITE(export_absolute_path.c_str(), EP_PACK_MODE_WRITE, 0, data_size, buf);
 		EP_SAFE_DELETE_ARR(buf);
+
+		++it;
 	}
 
 	return 0;
@@ -89,48 +98,46 @@ int ep_reader::export_package(const char* export_dir)
 bool ep_reader::file_exist(const char* file_path)
 {
 	// to-do: optimize
-	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
-
-	for (EPFileEntityEx file_entity : v_file_info)
+	uint64_t str_hash = ep_bkdr_hash(file_path, EP_HASH_SEED);
+	MAP_EP_FILE_ENTITY_EX map_ep_files = _p_ep_package->get_ep_file_info();
+	MAP_EP_FILE_ENTITY_EX_ITERATOR it = map_ep_files.find(str_hash);
+	if (it != map_ep_files.end())
 	{
-		if (strcmp(file_entity.relative_path, file_path) == 0)
-		{
-			return true;
-		}
+		return true;
 	}
 
 	return false;
 }
 
-uint32_t ep_reader::get_file_data(const char* file_path, char** buf)
+uint32_t ep_reader::get_file_data_from_package(const char* file_path, char** buf)
 {
 	const std::string pkg_dir = _p_ep_package->get_package_dir();
-	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
-	for (EPFileEntityEx file_entity : v_file_info)
+
+	uint64_t str_hash = ep_bkdr_hash(file_path, EP_HASH_SEED);
+	MAP_EP_FILE_ENTITY_EX map_ep_files = _p_ep_package->get_ep_file_info();
+	MAP_EP_FILE_ENTITY_EX_ITERATOR it = map_ep_files.find(str_hash);
+	if (it != map_ep_files.end())
 	{
-		if (strcmp(file_entity.relative_path, file_path) == 0)
+		*buf = new char[it->second.source_data_size + 1];
+		memset(*buf, 0, it->second.source_data_size + 1);
+
+		char* compressed_buf = new char[it->second.compressed_data_size];
+		memset(compressed_buf, 0, it->second.compressed_data_size);
+
+		uint32_t data_offset = it->second.offset + sizeof(EPFileEntity)+it->second.compress_relative_path_size;
+		ep_read(pkg_dir.c_str(), data_offset, it->second.compressed_data_size, compressed_buf);
+
+		uLongf dest_len = it->second.source_data_size + 1;
+		uncompress((Bytef*)*buf, &dest_len, (Bytef*)compressed_buf, it->second.compressed_data_size);
+
+		if (dest_len != it->second.source_data_size)
 		{
-			*buf = new char[file_entity.source_data_size+1];
-			memset(*buf, 0, file_entity.source_data_size + 1);
-
-			char* compressed_buf = new char[file_entity.compressed_data_size];
-			memset(compressed_buf, 0, file_entity.compressed_data_size);
-
-			uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
-			ep_read(pkg_dir.c_str(), data_offset, file_entity.compressed_data_size, compressed_buf);
-
-			uLongf dest_len = file_entity.source_data_size+1;
-			uncompress((Bytef*)*buf, &dest_len, (Bytef*)compressed_buf, file_entity.compressed_data_size);
-
-			if (dest_len != file_entity.source_data_size)
-			{
-				printf("error");
-			}
-
-			EP_SAFE_DELETE_ARR(compressed_buf);
-
-			return file_entity.source_data_size;
+			printf("error");
 		}
+
+		EP_SAFE_DELETE_ARR(compressed_buf);
+
+		return it->second.source_data_size;
 	}
 
 	return 0;

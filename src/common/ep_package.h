@@ -2,6 +2,7 @@
 #include "ep_define.h"
 #include <string>
 #include <vector>
+#include <map>
 
 class ep_writer;
 
@@ -14,7 +15,7 @@ public:
 
 	int parse(const char* package_dir);
 
-	const std::vector<EPFileEntityEx>& get_ep_file_info() const;
+	const MAP_EP_FILE_ENTITY_EX& get_ep_file_info() const;
 
 	const EPHeader& get_ep_header() const;
 
@@ -27,8 +28,8 @@ protected:
 	int parse_package();
 
 private:
-	std::string					_package_dir;
-	EPHeader					_ep_header;
-	std::vector<EPFileEntityEx>	_v_ep_files;
+	std::string							_package_dir;
+	EPHeader							_ep_header;
+	MAP_EP_FILE_ENTITY_EX				_map_ep_files;
 };
 

@@ -16,12 +16,12 @@ ep_package* ep_package::create_package(const char* package_dir)
 
 ep_package::ep_package()
 {
-	_v_ep_files.clear();
+	_map_ep_files.clear();
 }
 
 ep_package::~ep_package()
 {
-	_v_ep_files.clear();
+	_map_ep_files.clear();
 }
 
 int ep_package::parse(const char* package_dir)
@@ -43,7 +43,6 @@ int ep_package::parse_package()
 	_finddata_t findData;
 	_findfirst(_package_dir.c_str(), &findData);
 	unsigned long package_size = findData.size;
-
 	unsigned long offset = 0;
 
 	// read ep_package sign
@@ -55,7 +54,7 @@ int ep_package::parse_package()
 		goto EP_ERROR;
 	EP_SAFE_DELETE_ARR(buf);
 
-	// read ep_package info
+	// read ep_package version
 	size = EP_VERSION_LENGTH;
 	buf = new char[size];
 	ep_read(_package_dir.c_str(), offset, size, buf);
@@ -86,22 +85,29 @@ int ep_package::parse_package()
 		EPFileEntityEx file_entity_ex;
 		EPFileEntity* p_file_entity = (EPFileEntity*)buf;
 		file_entity_ex.offset = p_file_entity->offset;
+		file_entity_ex.relative_path_hash = p_file_entity->relative_path_hash;
 		file_entity_ex.relative_path_size = p_file_entity->relative_path_size;
+		file_entity_ex.compress_relative_path_size = p_file_entity->compress_relative_path_size;
 		file_entity_ex.source_data_size = p_file_entity->source_data_size;
 		file_entity_ex.compressed_data_size = p_file_entity->compressed_data_size;
 		//
 		offset += file_entity_size;
 		EP_SAFE_DELETE_ARR(buf);
 
-		// EPFileEntityEx		-- EPFileEntity
-		buf = new char[file_entity_ex.relative_path_size];
-		if (ep_read(_package_dir.c_str(), offset, file_entity_ex.relative_path_size, buf) != 0) {
+		// EPFileEntityEx		-- EPFileEntity relative_path
+		uint32_t compress_path_size = file_entity_ex.compress_relative_path_size;
+		uLongf relative_size = file_entity_ex.relative_path_size;
+		printf("ha%d\n", relative_size);
+		buf = new char[compress_path_size];
+		if (ep_read(_package_dir.c_str(), offset, file_entity_ex.compress_relative_path_size, buf) != 0) {
 			break; goto EP_ERROR;
 		}
-		strncpy(file_entity_ex.relative_path, buf, file_entity_ex.relative_path_size);
-		_v_ep_files.push_back(file_entity_ex);
+		uncompress((Bytef*)file_entity_ex.relative_path, &relative_size, (Bytef*)buf, compress_path_size);
+		EP_SAFE_DELETE_ARR(buf);
+		_map_ep_files.insert(MAP_EP_FILE_ENTITY_EX_PAIR(file_entity_ex.relative_path_hash, file_entity_ex));
+
 		// 
-		offset += file_entity_ex.relative_path_size;
+		offset += file_entity_ex.compress_relative_path_size;
 		offset += file_entity_ex.compressed_data_size;
 	}
 
@@ -111,9 +117,9 @@ EP_ERROR:
 	return -1;
 }
 
-const std::vector<EPFileEntityEx>& ep_package::get_ep_file_info() const
+const MAP_EP_FILE_ENTITY_EX& ep_package::get_ep_file_info() const
 {
-	return _v_ep_files;
+	return _map_ep_files;
 }
 
 const EPHeader& ep_package::get_ep_header() const

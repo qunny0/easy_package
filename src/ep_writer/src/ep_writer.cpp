@@ -1,9 +1,9 @@
 #include "ep_writer.h"
 #include "ep_utils.h"
+#include "ep_package.h"
+#include "zlib.h"
 #include <io.h>
 #include <time.h>
-
-#include "zlib.h"
 
 ep_writer::ep_writer()
 {
@@ -71,17 +71,29 @@ int ep_writer::analyze_dir(const std::string dir)
 void ep_writer::new_a_file_entity(const char* file_relative_path, const uint32_t file_size)
 {
 	EPFileEntityEx file_entity;
+	file_entity.relative_path_hash = ep_bkdr_hash(file_relative_path, EP_HASH_SEED);
 	file_entity.relative_path_size = strlen(file_relative_path);
 	strncpy(file_entity.relative_path, file_relative_path, file_entity.relative_path_size);
 	file_entity.source_data_size = file_size;
-	_p_ep_package->_v_ep_files.push_back(file_entity);
+	file_entity.n_hash_collision_flag = 1;
+
+	MAP_EP_FILE_ENTITY_EX_ITERATOR it = _p_ep_package->_map_ep_files.find(file_entity.relative_path_hash);
+	if (it == _p_ep_package->_map_ep_files.end())
+	{
+		_p_ep_package->_map_ep_files.insert(MAP_EP_FILE_ENTITY_EX_PAIR(file_entity.relative_path_hash, file_entity));
+	}
+	else
+	{
+		it->second.n_hash_collision_flag += 1;
+		// hash collision
+		printf("%s\n", it->second.relative_path);
+		printf("%s\n hash collision", file_relative_path);
+	}
 }
 
 int ep_writer::write_dir_to_package()
 {
 	const char* package_dir = _p_ep_package->_package_dir.c_str();
-	const std::vector<EPFileEntityEx>& v_ep_files = _p_ep_package->get_ep_file_info();
-
 	long offset = 0;
 
 	// package sign
@@ -102,36 +114,45 @@ int ep_writer::write_dir_to_package()
 	// file data
 	const unsigned int ep_file_entity_size = sizeof(EPFileEntity);
 	int index = 0;
-	for (EPFileEntityEx file_entity : v_ep_files)
+	MAP_EP_FILE_ENTITY_EX_ITERATOR it = _p_ep_package->_map_ep_files.begin();
+	MAP_EP_FILE_ENTITY_EX_CONST_ITERATOR it_end = _p_ep_package->_map_ep_files.end();
+	while (it != it_end)
 	{
-		printf("package file[%d] %s ...\n", index++, file_entity.relative_path);
+		printf("package file[%d] %s ...\n", index++, it->second.relative_path);
 
-		char* src_data = new char[file_entity.source_data_size];
-		std::string file_absolute_path = _file_root_dir + "\\" + file_entity.relative_path;
-		ep_read(file_absolute_path.c_str(), 0, file_entity.source_data_size, src_data);
+		char* src_data = new char[it->second.source_data_size];
+		std::string file_absolute_path = _file_root_dir + "\\" + it->second.relative_path;
+		ep_read(file_absolute_path.c_str(), 0, it->second.source_data_size, src_data);
 
 		// calculate compress data
-		uLongf dest_len = compressBound(file_entity.source_data_size);
-		Bytef* dest_buf = new Bytef[dest_len];
-		compress(dest_buf, &dest_len, (Bytef*)src_data, file_entity.source_data_size);
+		uLongf compress_len = compressBound(it->second.source_data_size);
+		Bytef* compress_buf = new Bytef[compress_len];
+		compress(compress_buf, &compress_len, (Bytef*)src_data, it->second.source_data_size);
 		EP_SAFE_DELETE_ARR(src_data);
 
-		file_entity.offset = offset;
-		file_entity.compressed_data_size = dest_len;
+		uLongf compress_path_len = compressBound(it->second.relative_path_size);
+		Bytef* compress_path_buf = new Bytef[compress_path_len];
+		compress(compress_path_buf, &compress_path_len, (Bytef*)it->second.relative_path, it->second.relative_path_size);
 
+		it->second.offset = offset;
+		it->second.compressed_data_size = compress_len;
+		it->second.compress_relative_path_size = compress_path_len;
+
+		// write
 		// EPFileEntityEx	-- EPFileEntity Information
-		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, ep_file_entity_size, (char*)&file_entity);
+		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, ep_file_entity_size, (char*)&it->second);
 		offset += ep_file_entity_size;
 
-		// EPFileEntityEx	-- relative_path
-		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, file_entity.relative_path_size, file_entity.relative_path);
-		offset += file_entity.relative_path_size;
+		// EPFileEntityEx	-- relative_path -- compress
+		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, it->second.compress_relative_path_size, (char*)compress_path_buf);
+		offset += it->second.compress_relative_path_size;
+		EP_SAFE_DELETE_ARR(compress_path_buf);
 
-		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, dest_len, (char*)dest_buf);
+		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, it->second.compressed_data_size, (char*)compress_buf);
+		offset += it->second.compressed_data_size;
+		EP_SAFE_DELETE_ARR(compress_buf);
 
-		EP_SAFE_DELETE_ARR(dest_buf);
-
-		offset += file_entity.compressed_data_size;
+		++it;
 	}
 
 	return 0;

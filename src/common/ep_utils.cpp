@@ -123,7 +123,19 @@ int ep_clear_file(const char* path)
 	return 0;
 }
 
-void ep_compress(char* dest_buf, unsigned long* dest_size, const char* src_buf, unsigned long src_len)
+uint64_t ep_bkdr_hash(const char* key, uint32_t seed)
 {
+	uint64_t out = 0;
+	while (*key)
+	{
+		char ch = *(key++);
+		if (ch == ('\\'))
+		{
+			ch = ('/');
+		}
 
+		out = out * seed + ch;
+	}
+
+	return out;
 }

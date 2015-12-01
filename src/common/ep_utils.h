@@ -1,6 +1,8 @@
 #ifndef EP_UTILS
 #define EP_UTILS
 
+#include <stdint.h>
+
 #define EP_WRITE(dir, mode, offset, size, data) {	\
 	if (ep_write(dir, mode, offset, size, data) != 0)	\
 		return -1; }
@@ -22,7 +24,9 @@ extern int ep_clear_file(const char* path);
 
 extern void ep_output(const char* format, ...);
 
-extern void ep_compress(char* dest_buf, unsigned long* dest_size, const char* src_buf, unsigned long src_len);
+// extern void ep_compress(char* dest_buf, unsigned long* dest_size, const char* src_buf, unsigned long src_len);
+
+extern uint64_t ep_bkdr_hash(const char* key, uint32_t seed);
 
 // to-do
 // 1. 可变参数，获取各个参数 va_list

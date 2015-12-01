@@ -1,6 +1,7 @@
 #pragma once
 #include "ep_define.h"
-#include "ep_package.h"
+
+class ep_package;
 
 class ep_reader : public IEP_READER
 {
@@ -11,7 +12,7 @@ public:
 
 	virtual bool file_exist(const char* file_path);
 
-	virtual uint32_t get_file_data(const char* file_path, char** buf);
+	virtual uint32_t get_file_data_from_package(const char* file_path, char** buf);
 
 protected:
 	ep_reader();
