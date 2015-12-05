@@ -97,7 +97,6 @@ int ep_package::parse_package()
 		// EPFileEntityEx		-- EPFileEntity relative_path
 		uint32_t compress_path_size = file_entity_ex.compress_relative_path_size;
 		uLongf relative_size = file_entity_ex.relative_path_size;
-		printf("ha%d\n", relative_size);
 		buf = new char[compress_path_size];
 		if (ep_read(_package_dir.c_str(), offset, file_entity_ex.compress_relative_path_size, buf) != 0) {
 			break; goto EP_ERROR;

@@ -40,28 +40,8 @@ void ep_reader::show_all_file_path() const
 	MAP_EP_FILE_ENTITY_EX_CONST_ITERATOR it_end = map_file_info.end();
 	while (it != it_end)
 	{
-		printf("file relative path : %s \n", it->second.relative_path);
 		++it;
 	}
-}
-
-void ep_reader::print_file_data_by_path(const char* file_dir)
-{
-// 	const std::string pkg_dir = _p_ep_package->get_package_dir();
-// 	const std::vector<EPFileEntityEx> v_file_info = _p_ep_package->get_ep_file_info();
-// 
-// 	for (EPFileEntityEx file_entity : v_file_info)
-// 	{
-// 		if (strcmp(file_entity.relative_path, file_dir) == 0)
-// 		{
-// 			char* buf = nullptr;
-// 			uint32_t data_offset = file_entity.offset + file_entity.relative_path_size + sizeof(EPFileEntity);
-// 			ep_read(pkg_dir.c_str(), data_offset, file_entity.data_size, buf);
-// 			printf("%s data : %s \n", file_dir, buf);
-// 			EP_SAFE_DELETE_ARR(buf);
-// 			break;
-// 		}
-// 	}
 }
 
 int ep_reader::export_package(const char* export_dir)
@@ -114,8 +94,10 @@ uint32_t ep_reader::get_file_data_from_package(const char* file_path, char** buf
 	const std::string pkg_dir = _p_ep_package->get_package_dir();
 
 	uint64_t str_hash = ep_bkdr_hash(file_path, EP_HASH_SEED);
-	MAP_EP_FILE_ENTITY_EX map_ep_files = _p_ep_package->get_ep_file_info();
-	MAP_EP_FILE_ENTITY_EX_ITERATOR it = map_ep_files.find(str_hash);
+	const MAP_EP_FILE_ENTITY_EX& map_ep_files = _p_ep_package->get_ep_file_info();
+// 	MAP_EP_FILE_ENTITY_EX map_ep_files = _p_ep_package->get_ep_file_info();
+	MAP_EP_FILE_ENTITY_EX_CONST_ITERATOR it = map_ep_files.find(str_hash);
+
 	if (it != map_ep_files.end())
 	{
 		*buf = new char[it->second.source_data_size + 1];

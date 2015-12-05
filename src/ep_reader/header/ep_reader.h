@@ -22,8 +22,6 @@ protected:
 
 	void show_all_file_path() const;
 
-	void print_file_data_by_path(const char* file_dir);
-
 private:
 	ep_package*				_p_ep_package;
 };
