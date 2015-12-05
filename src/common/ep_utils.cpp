@@ -156,14 +156,23 @@ int ep_set_file_length(FILE* file, uint32_t len)
 
 int ep_set_file_length(const char* path, uint32_t len)
 {
-	FILE* file = fopen(path, "a");
+	FILE* file = fopen(path, "ab");
 	if (file)
 	{
 // 		int ret = fseek(file, 0, SEEK_END);
 // 		uint32_t length = ftell(file);
-		int ret = ep_set_file_length(file, len);
+// 		// truncate
+// 		if (len < length)
+// 		{
+// 			int fd = _fileno(file);
+// 			HANDLE hfile = (HANDLE)_get_osfhandle(fd);
+// 			ret =  SetEndOfFile(hfile);
+// 		}
+		fseek(file, len, SEEK_SET);
+		int fd = _fileno(file);
+		HANDLE hfile = (HANDLE)_get_osfhandle(fd);
+		int ret = SetEndOfFile(hfile);
 		fclose(file);
-
 		return ret;
 	}
 

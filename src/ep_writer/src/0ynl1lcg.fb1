@@ -18,7 +18,6 @@ ep_writer::~ep_writer()
 int ep_writer::package_dir(const char* pkg_dir, const char* file_dir, const char mode)
 {
 	_file_root_dir = file_dir;
-
 	_p_ep_package = ep_package::create_package(pkg_dir);
 	_p_ep_package->_ep_header.compressed = mode;
 
@@ -94,7 +93,7 @@ void ep_writer::new_a_file_entity(const char* file_relative_path, const uint32_t
 		ep_read(file_absolute_path.c_str(), 0, file_size, src_buf);
 
 		uint64_t crc32_src_data = 0;
-		crc32_src_data = crc32(0L, (Bytef*)src_buf, file_size);
+		crc32_src_data = crc32(0L, (Bytef*)src_buf, it->second.source_data_size);
 		EP_SAFE_DELETE_ARR(src_buf);
 
 		if (crc32_src_data != it->second.crc32_source_data)
@@ -113,9 +112,8 @@ int ep_writer::write_package()
 
 	offset = update_package(offset);
 
-//   	int ret = write_dir_to_package(offset);
+	int ret = write_dir_to_package(offset);
 
-	int ret = 0;
 	return ret;
 }
 
@@ -124,31 +122,20 @@ long ep_writer::write_package_header(long offset)
 {
 	const char* package_dir = _p_ep_package->_package_dir.c_str();
 
-	bool pkg_exist = dir_valid(package_dir, 0) == 0;
+	// package sign
+	printf("package sign...\n");
+	EP_WRITE(package_dir, EP_PACK_MODE_WRITE, offset, EP_SIGN_LENGTH, EP_PACKAGE_SIGN);
+	offset += EP_SIGN_LENGTH;
 
-	if (!pkg_exist)
-	{
-		// package sign
-		printf("package sign...\n");
-		EP_WRITE(package_dir, EP_PACK_MODE_WRITE, offset, EP_SIGN_LENGTH, EP_PACKAGE_SIGN);
-		offset += EP_SIGN_LENGTH;
+	// version info
+	printf("package version information ...\n");
+	EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, EP_VERSION_LENGTH, EP_VERSION);
+	offset += EP_VERSION_LENGTH;
 
-		// version info
-		printf("package version information ...\n");
-		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, EP_VERSION_LENGTH, EP_VERSION);
-		offset += EP_VERSION_LENGTH;
-
-		// package header
-		printf("package header ...\n");
-		EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, sizeof(EPHeader), (char *)&_p_ep_package->_ep_header);
-		offset += sizeof(EPHeader);
-	}
-	else
-	{
-		offset += EP_SIGN_LENGTH;
-		offset += EP_VERSION_LENGTH;
-		offset += sizeof(EPHeader);
-	}
+	// package header
+	printf("package header ...\n");
+	EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, sizeof(EPHeader), (char *)&_p_ep_package->_ep_header);
+	offset += sizeof(EPHeader);
 
 	return offset;
 }

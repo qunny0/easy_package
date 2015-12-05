@@ -31,11 +31,11 @@ void ep_manager::show_tips()
 
 int ep_manager::package(const char* package_dir, const char* dir, const char* mode)
 {
-	if (dir_valid(package_dir, 0) == 0)
-	{
-		printf("%s exist!\n", package_dir);
-		return -1;
-	}
+// 	if (dir_valid(package_dir, 0) == 0)
+// 	{
+// 		printf("%s exist!\n", package_dir);
+// 		return -1;
+// 	}
 
 	return _ep_writer->package_dir(package_dir, dir, mode[0]);
 }

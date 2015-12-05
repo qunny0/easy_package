@@ -90,6 +90,7 @@ int ep_package::parse_package()
 		file_entity_ex.compress_relative_path_size = p_file_entity->compress_relative_path_size;
 		file_entity_ex.source_data_size = p_file_entity->source_data_size;
 		file_entity_ex.compressed_data_size = p_file_entity->compressed_data_size;
+		file_entity_ex.crc32_source_data = p_file_entity->crc32_source_data;
 		//
 		offset += file_entity_size;
 		EP_SAFE_DELETE_ARR(buf);
@@ -103,6 +104,7 @@ int ep_package::parse_package()
 		}
 		uncompress((Bytef*)file_entity_ex.relative_path, &relative_size, (Bytef*)buf, compress_path_size);
 		EP_SAFE_DELETE_ARR(buf);
+
 		_map_ep_files.insert(MAP_EP_FILE_ENTITY_EX_PAIR(file_entity_ex.relative_path_hash, file_entity_ex));
 
 		// 
