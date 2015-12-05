@@ -1,11 +1,10 @@
 #include "ep_utils.h"
 #include <sys/stat.h>
-#include <io.h>
-#include <stdio.h>
 #include <string>
 #include <stdarg.h>
 #include <direct.h>
 #include <errno.h>
+#include <io.h>
 
 #include "zlib.h"
 
@@ -136,6 +135,37 @@ uint64_t ep_bkdr_hash(const char* key, uint32_t seed)
 
 		out = out * seed + ch;
 	}
-
 	return out;
+}
+
+int ep_set_file_length(FILE* file, uint32_t len)
+{
+#ifdef _WIN32
+	fseek(file, len, SEEK_SET);
+	int fd = _fileno(file);
+	HANDLE hfile = (HANDLE)_get_osfhandle(fd);
+	fflush(file);
+ 	int ret = SetEndOfFile(hfile);
+	uint32_t err = GetLastError();
+	return ret;
+#else
+	int fd = fileno(file);
+	return ftruncate(fd, len) == 0;
+#endif
+}
+
+int ep_set_file_length(const char* path, uint32_t len)
+{
+	FILE* file = fopen(path, "a");
+	if (file)
+	{
+// 		int ret = fseek(file, 0, SEEK_END);
+// 		uint32_t length = ftell(file);
+		int ret = ep_set_file_length(file, len);
+		fclose(file);
+
+		return ret;
+	}
+
+	return -1;
 }

@@ -95,7 +95,6 @@ uint32_t ep_reader::get_file_data_from_package(const char* file_path, char** buf
 
 	uint64_t str_hash = ep_bkdr_hash(file_path, EP_HASH_SEED);
 	const MAP_EP_FILE_ENTITY_EX& map_ep_files = _p_ep_package->get_ep_file_info();
-// 	MAP_EP_FILE_ENTITY_EX map_ep_files = _p_ep_package->get_ep_file_info();
 	MAP_EP_FILE_ENTITY_EX_CONST_ITERATOR it = map_ep_files.find(str_hash);
 
 	if (it != map_ep_files.end())

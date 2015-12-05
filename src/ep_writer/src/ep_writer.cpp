@@ -1,9 +1,10 @@
 #include "ep_writer.h"
+#include <io.h>
+#include <time.h>
 #include "ep_utils.h"
 #include "ep_package.h"
 #include "zlib.h"
-#include <io.h>
-#include <time.h>
+#include "crc32.h"
 
 ep_writer::ep_writer()
 {
@@ -124,6 +125,9 @@ int ep_writer::write_dir_to_package()
 		std::string file_absolute_path = _file_root_dir + "\\" + it->second.relative_path;
 		ep_read(file_absolute_path.c_str(), 0, it->second.source_data_size, src_data);
 
+		uint64_t crc32_src_data = 0;
+		crc32_src_data = crc32(0L, (Bytef*)src_data, it->second.source_data_size);
+
 		// calculate compress data
 		uLongf compress_len = compressBound(it->second.source_data_size);
 		Bytef* compress_buf = new Bytef[compress_len];
@@ -137,6 +141,7 @@ int ep_writer::write_dir_to_package()
 		it->second.offset = offset;
 		it->second.compressed_data_size = compress_len;
 		it->second.compress_relative_path_size = compress_path_len;
+		it->second.crc32_source_data = crc32_src_data;
 
 		// write
 		// EPFileEntityEx	-- EPFileEntity Information
@@ -156,9 +161,4 @@ int ep_writer::write_dir_to_package()
 	}
 
 	return 0;
-}
-
-void ep_compress()
-{
-// 	compress()
 }

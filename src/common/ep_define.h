@@ -23,6 +23,10 @@ const char EP_VERSION[EP_VERSION_LENGTH] = "1.0.12";
 // _MAX_PATH = 260
 #define  EP_MAX_PATH 260
 
+#define EP_WRITE(dir, mode, offset, size, data) {	\
+if (ep_write(dir, mode, offset, size, data) != 0)	\
+	return -1; }
+
 #pragma pack(1)
 
 typedef struct EPHeader
@@ -43,6 +47,7 @@ typedef struct EPFileEntity
 	uint32_t	compress_relative_path_size;
 	uint32_t	source_data_size;
 	uint32_t	compressed_data_size;
+	uint64_t	crc32_source_data;
 
 	EPFileEntity() 
 	{
@@ -52,6 +57,7 @@ typedef struct EPFileEntity
 		compress_relative_path_size = 0;
 		source_data_size = 0;
 		compressed_data_size = 0;
+		crc32_source_data = 0;
 	}
 }EPFileEntity;
 
@@ -90,6 +96,5 @@ typedef std::pair<uint64_t, EPFileEntityEx>					MAP_EP_FILE_ENTITY_EX_PAIR;
 typedef std::map<uint64_t, EPFileEntityEx>					MAP_EP_FILE_ENTITY_EX;
 typedef std::map<uint64_t, EPFileEntityEx>::iterator		MAP_EP_FILE_ENTITY_EX_ITERATOR;
 typedef std::map<uint64_t, EPFileEntityEx>::const_iterator	MAP_EP_FILE_ENTITY_EX_CONST_ITERATOR;
-
 
 #endif

@@ -88,11 +88,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\common\crc32.h" />
     <ClInclude Include="..\..\src\common\ep_define.h" />
     <ClInclude Include="..\..\src\common\ep_package.h" />
     <ClInclude Include="..\..\src\ep_writer\header\ep_writer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\common\crc32.c" />
     <ClCompile Include="..\..\src\common\ep_package.cpp" />
     <ClCompile Include="..\..\src\ep_writer\src\ep_writer.cpp" />
   </ItemGroup>
