@@ -111,40 +111,12 @@ int ep_writer::write_package()
 
 	offset = write_package_header(offset);
 
-	test(offset);
+	offset = update_package(offset);
 
-// 	offset = update_package(offset);
-// 
-//   	int ret = write_dir_to_package(offset);
-// 	return ret;
+  	int ret = write_dir_to_package(offset);
 
-	return 0;
+	return ret;
 }
-
-int ep_writer::test(long offset)
-{
-	EPFileEntity fileEntity;
-
-	fileEntity.offset = offset;
-	fileEntity.relative_path_hash = 2450701060051609895;
-	fileEntity.relative_path_size = 18;
-	fileEntity.compress_relative_path_size = 26;
-	fileEntity.source_data_size = 2566;
-	fileEntity.compressed_data_size = 1864;
-	fileEntity.crc32_source_data = 240946668;
-
-	uint32_t size = sizeof(EPFileEntity);
-
-	const char* package_dir = _p_ep_package->_package_dir.c_str();
-	EP_WRITE(package_dir, EP_PACK_MODE_REWRITE, offset, size, (char*)&fileEntity);
-
-	char* buf = new char[size];
-	ep_read(package_dir, offset, size, buf);
-	EPFileEntity* outFile = (EPFileEntity*)buf;
-
-	return 0;
-}
-
 
 long ep_writer::write_package_header(long offset)
 {

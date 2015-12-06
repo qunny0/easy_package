@@ -7,6 +7,7 @@
 #include <io.h>
 
 #include "zlib.h"
+#include "ep_define.h"
 
 int is_dir(const char* path)
 {
@@ -69,7 +70,7 @@ void ep_output(const char* format, ...)
 
 int ep_read(const char* path, unsigned long offset, unsigned long size, char* out_buf)
 {
-	FILE* file = fopen(path, "rb");
+	FILE* file = fopen(path, EP_PACK_MODE_READ);
 	if (!file) goto EP_ERROR;
 
 	int ret = fseek(file, offset, SEEK_SET);

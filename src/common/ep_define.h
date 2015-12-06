@@ -10,9 +10,10 @@
 const char EP_UNCOMPRESSED_FALG = '0';
 const char EP_COMPRESSED_FLAG = '1';
 
+#define EP_PACK_MODE_READ		"rb"
 #define EP_PACK_MODE_WRITE		"wb"
 #define EP_PACK_MODE_APPEND		"ab+"
-#define EP_PACK_MODE_REWRITE	"r+"
+#define EP_PACK_MODE_REWRITE	"rb+"
 
 #define EP_HASH_SEED		31		// 131 13131
 
