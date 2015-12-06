@@ -49,6 +49,14 @@ int ep_manager::parse_package(const char* package_path)
 
 int ep_manager::package_export(const char* package_dir, const char* export_dir)
 {
+// 	std::string str = "C:\\Users\\Administrator\\Desktop\\export\\test.txt";
+// 
+// 	char tt[4] = "abc";
+// 
+// 	ep_write(str.c_str(), "r+", 2, 3, tt);
+// 
+// 	return 0;
+
 	time_t pre_time, aft_time;
 	
 	time(&pre_time);

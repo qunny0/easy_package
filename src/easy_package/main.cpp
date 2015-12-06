@@ -8,6 +8,7 @@
 #define COMMAND_EXPORT	"export"
 
 // pack C:\Users\Administrator\Desktop\ep_test.ep E:\Work\FuBeiProject\Parkour\Run\client\iPhone\armatures w
+// pack C:\Users\Administrator\Desktop\ep_test.ep C:\Users\Administrator\Desktop\test w
 // parse C:\Users\Administrator\Desktop\ep_test.ep
 // export C:\Users\Administrator\Desktop\ep_test.ep C:\Users\Administrator\Desktop\export
 

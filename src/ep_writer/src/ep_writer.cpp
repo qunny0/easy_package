@@ -180,26 +180,24 @@ long ep_writer::update_package(long offset)
 			else
 			{
 				printf("package move file[%d] %s ...\n", index++, it->second.relative_path);
+
+				uint32_t origin_offset = it->second.offset;
+				it->second.offset = offset;
+
 				// write
 				// EPFileEntityEx	-- EPFileEntity Information
-				EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, ep_file_entity_size, (char*)&it->second);
+				EP_WRITE(package_dir, EP_PACK_MODE_REWRITE, offset, ep_file_entity_size, (char*)&it->second);
 				offset += ep_file_entity_size;
 
-				// EPFileEntityEx	-- relative_path -- compress
-				uint32_t relative_offset = it->second.offset + ep_file_entity_size;
-				char* buf = new char[it->second.compress_relative_path_size];
-				ep_read(package_dir, relative_offset, it->second.compress_relative_path_size, buf);
-				EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, it->second.compress_relative_path_size, (char*)buf);
-				offset += it->second.compress_relative_path_size;
+				// relative_path + file_data
+				uint32_t relative_offset = origin_offset + ep_file_entity_size;
+				uint32_t origin_size = it->second.compress_relative_path_size + it->second.compressed_data_size;
+				char* buf = new char[origin_size];
+				ep_read(package_dir, relative_offset, origin_size, buf);
+				EP_WRITE(package_dir, EP_PACK_MODE_REWRITE, offset, origin_size, buf);
 				EP_SAFE_DELETE_ARR(buf);
 
-				// Move data
-				uint32_t data_offset = it->second.offset + ep_file_entity_size + it->second.compress_relative_path_size;
-				buf = new char[it->second.compressed_data_size];
-				ep_read(package_dir, data_offset, it->second.compressed_data_size, buf);
-				EP_WRITE(package_dir, EP_PACK_MODE_APPEND, offset, it->second.compressed_data_size, (char*)buf);
-				offset += it->second.compressed_data_size;
-				EP_SAFE_DELETE_ARR(buf);
+				offset += origin_size;
 			}
 		}
 
