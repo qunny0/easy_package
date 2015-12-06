@@ -25,6 +25,8 @@ protected:
 
 	int write_dir_to_package(long offset);
 
+	int test(long offset);
+
 private:
 	std::string					_file_root_dir;
 	ep_package*					_p_ep_package;
