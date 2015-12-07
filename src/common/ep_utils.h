@@ -4,6 +4,14 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#ifdef _WIN32
+	#define ACCESS(dir, mode)  _access(dir, mode)
+	#define MKDIR(dir) _mkdir(dir)
+#else
+	#define ACCESS(dir, mode)  access(dir, mode)
+	#define MKDIR(dir) mkdir(dir, 0755)
+#endif
+
 extern int is_dir(const char* path);
 
 // F_OK 0	R_OK 2	W_OK 4	X_OK 6
@@ -21,8 +29,6 @@ extern int ep_clear_file(const char* path);
 // extern void ep_compress(char* dest_buf, unsigned long* dest_size, const char* src_buf, unsigned long src_len);
 
 extern uint64_t ep_bkdr_hash(const char* key, uint32_t seed);
-
-extern int ep_set_file_length(FILE* file, uint32_t len);
 
 extern int ep_set_file_length(const char* path, uint32_t len);
 

@@ -1,13 +1,17 @@
 #include "ep_utils.h"
 #include <sys/stat.h>
-#include <string>
 #include <stdarg.h>
-#include <direct.h>
 #include <errno.h>
-#include <io.h>
 
-#include "zlib.h"
+#ifdef _WIN32
+#include <io.h>
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
+
 #include "ep_define.h"
+#include "zlib.h"
 
 int is_dir(const char* path)
 {
@@ -20,7 +24,7 @@ int is_dir(const char* path)
 
 int dir_valid(const char* dir, int mode)
 {
-	if (int ret = _access(dir, mode) == -1)
+	if (int ret = ACCESS(dir, mode) == -1)
 	{
 		return -1;
 	}
@@ -41,7 +45,7 @@ int ep_mk_dir(const char* dir)
 	{
 		std::string str_parent_dir = str_dir.substr(0, str_dir.rfind('\\'));
 		ep_mk_dir(str_parent_dir.c_str());
-		if (_mkdir(str_dir.c_str()) != 0)
+		if (MKDIR(str_dir.c_str()) != 0)
 		{
 			if (errno == EEXIST)
 				return 0;
@@ -64,20 +68,29 @@ int ep_mk_dir(const char* dir)
 int ep_read(const char* path, unsigned long offset, unsigned long size, char* out_buf)
 {
 	FILE* file = fopen(path, EP_PACK_MODE_READ);
-	if (!file) goto EP_ERROR;
+	if (!file)  {
+		goto EP_ERROR;
+	}
 
 	int ret = fseek(file, offset, SEEK_SET);
-	if (ret != 0) goto EP_ERROR;
+	if (ret != 0) {
+		goto EP_ERROR;
+	}
 
 	int numread = fread(out_buf, sizeof(char), size, file);
-	if (numread != size) goto EP_ERROR;
+	if (numread != size) {
+		goto EP_ERROR;
+	}
 
 	fclose(file);
 	return 0;
 
 EP_ERROR:
-	if (file) fclose(file);
-	return -1;
+	{	
+		if (file) 
+			fclose(file);
+		return -1;
+	}
 }
 
 int ep_write(const char* path, const char* mode, unsigned long offset, unsigned long size, const char* in_buf)
@@ -132,24 +145,9 @@ uint64_t ep_bkdr_hash(const char* key, uint32_t seed)
 	return out;
 }
 
-int ep_set_file_length(FILE* file, uint32_t len)
-{
-#ifdef _WIN32
-	fseek(file, len, SEEK_SET);
-	int fd = _fileno(file);
-	HANDLE hfile = (HANDLE)_get_osfhandle(fd);
-	fflush(file);
- 	int ret = SetEndOfFile(hfile);
-	uint32_t err = GetLastError();
-	return ret;
-#else
-	int fd = fileno(file);
-	return ftruncate(fd, len) == 0;
-#endif
-}
-
 int ep_set_file_length(const char* path, uint32_t len)
 {
+#ifdef _WIN32
 	FILE* file = fopen(path, "ab");
 	if (file)
 	{
@@ -160,6 +158,7 @@ int ep_set_file_length(const char* path, uint32_t len)
 		fclose(file);
 		return ret;
 	}
+#endif
 
 	return -1;
 }

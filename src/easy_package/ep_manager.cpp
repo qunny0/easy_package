@@ -6,7 +6,6 @@
 #include "zlib.h"
 
 #include <time.h>
-#include <io.h>
 
 ep_manager::ep_manager()
 {
