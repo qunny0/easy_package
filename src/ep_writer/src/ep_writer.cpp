@@ -1,5 +1,10 @@
 #include "ep_writer.h"
-#include <io.h>
+#ifdef _WIN32
+	#include <io.h>
+#else
+	#include <unistd.h>
+	#include <stdio.h>
+#endif
 #include <time.h>
 #include "ep_utils.h"
 #include "ep_package.h"
@@ -42,6 +47,7 @@ int ep_writer::package_dir(const char* pkg_dir, const char* file_dir, const char
 
 int ep_writer::analyze_dir(const std::string dir)
 {
+#ifdef _WIN32
 	_finddata_t findData;
 	std::string findPath = dir + "\\*";
 	long handle = _findfirst(findPath.c_str(), &findData);
@@ -65,6 +71,7 @@ int ep_writer::analyze_dir(const std::string dir)
 	} while (_findnext(handle, &findData) == 0);
 
 	_findclose(handle);
+#endif
 
 	return 0;
 }
