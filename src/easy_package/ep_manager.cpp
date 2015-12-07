@@ -42,7 +42,7 @@ int ep_manager::parse_package(const char* package_path)
 
 int ep_manager::package_export(const char* package_dir, const char* export_dir)
 {
-	ep_mk_dir("C:\\Users\\Administrator\\Desktop\\test\\t1\\t2 ");
+	long size = ep_get_file_size("C:\\Users\\Administrator\\Desktop\\1.txt");
 
 	return 0;
 

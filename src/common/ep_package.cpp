@@ -1,7 +1,6 @@
 #include "ep_package.h"
 #include "ep_utils.h"
 #include "zlib.h"
-#include <io.h>
 
 ep_package* ep_package::create_package(const char* package_dir)
 {
@@ -40,9 +39,7 @@ int ep_package::parse(const char* package_dir)
 
 int ep_package::parse_package()
 {
-	_finddata_t findData;
-	_findfirst(_package_dir.c_str(), &findData);
-	unsigned long package_size = findData.size;
+	unsigned long package_size = ep_get_file_size(_package_dir.c_str());
 	unsigned long offset = 0;
 
 	// read ep_package sign

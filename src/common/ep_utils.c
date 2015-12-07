@@ -67,32 +67,48 @@ int ep_mk_dir(const char* dir)
 	return 0;
 }
 
+long ep_get_file_size(const char* path)
+{
+	FILE* file = fopen(path, "rb");
+	if (!file)
+		goto EP_ERROR;
+
+	int ret = fseek(file, 0, SEEK_END);
+	if (ret != 0)
+		goto EP_ERROR;
+
+	long size = ftell(file);
+
+	fclose(file);
+	return size;
+
+EP_ERROR:
+	if (file)
+		fclose(file);
+	return -1;
+}
+
 int ep_read(const char* path, unsigned long offset, unsigned long size, char* out_buf)
 {
 	FILE* file = fopen(path, "rb");
-	if (!file)  {
+	if (!file)  
 		goto EP_ERROR;
-	}
 
 	int ret = fseek(file, offset, SEEK_SET);
-	if (ret != 0) {
+	if (ret != 0)
 		goto EP_ERROR;
-	}
 
 	int numread = fread(out_buf, sizeof(char), size, file);
-	if (numread != size) {
+	if (numread != size)
 		goto EP_ERROR;
-	}
 
 	fclose(file);
 	return 0;
 
 EP_ERROR:
-	{	
 		if (file) 
 			fclose(file);
 		return -1;
-	}
 }
 
 int ep_write(const char* path, const char* mode, unsigned long offset, unsigned long size, const char* in_buf)

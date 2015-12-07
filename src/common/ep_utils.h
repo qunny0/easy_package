@@ -33,6 +33,8 @@ extern uint64_t ep_bkdr_hash(const char* key, uint32_t seed);
 
 extern int ep_set_file_length(const char* path, uint32_t len);
 
+extern long ep_get_file_size(const char* path);
+
 	// to-do
 	// 1. 可变参数，获取各个参数 va_list
 #ifdef __cplusplus 
