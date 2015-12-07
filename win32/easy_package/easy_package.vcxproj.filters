@@ -14,17 +14,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\ep_reader\ep_reader.vcxproj" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\src\easy_package\ep_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\easy_package\main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\ep_utils.c">
-      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -32,9 +26,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\common\ep_define.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\common\ep_utils.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>

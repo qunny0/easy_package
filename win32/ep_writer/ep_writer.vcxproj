@@ -90,10 +90,12 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\common\ep_define.h" />
     <ClInclude Include="..\..\src\common\ep_package.h" />
+    <ClInclude Include="..\..\src\common\ep_utils.h" />
     <ClInclude Include="..\..\src\ep_writer\header\ep_writer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\common\ep_package.cpp" />
+    <ClCompile Include="..\..\src\common\ep_utils.c" />
     <ClCompile Include="..\..\src\ep_writer\src\ep_writer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

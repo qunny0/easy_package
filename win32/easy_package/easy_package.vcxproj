@@ -88,16 +88,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="..\ep_reader\ep_reader.vcxproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\common\ep_utils.c" />
     <ClCompile Include="..\..\src\easy_package\ep_manager.cpp" />
     <ClCompile Include="..\..\src\easy_package\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common\ep_define.h" />
-    <ClInclude Include="..\..\src\common\ep_utils.h" />
     <ClInclude Include="..\..\src\easy_package\ep_manager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

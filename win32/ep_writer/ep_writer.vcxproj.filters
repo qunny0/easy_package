@@ -26,12 +26,18 @@
     <ClInclude Include="..\..\src\common\ep_package.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\common\ep_utils.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ep_writer\src\ep_writer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\common\ep_package.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\common\ep_utils.c">
       <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>

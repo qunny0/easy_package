@@ -62,6 +62,8 @@ int ep_mk_dir(const char* dir)
 		}
 	}
 
+	free(psz_dir);
+
 	return 0;
 }
 
