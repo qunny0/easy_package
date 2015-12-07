@@ -2,6 +2,8 @@
 #include <sys/stat.h>
 #include <stdarg.h>
 #include <errno.h>
+#include <string.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <io.h>
@@ -34,7 +36,7 @@ int dir_valid(const char* dir, int mode)
 int ep_mk_dir(const char* dir)
 {
 	// 
-	uint32_t len = strlen(dir);
+	unsigned int len = strlen(dir);
 	char* psz_dir = malloc(len+2);
 	strcpy(psz_dir, dir);
 

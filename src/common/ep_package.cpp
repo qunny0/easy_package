@@ -47,18 +47,20 @@ int ep_package::parse_package()
 	char* buf = new char[size];
 	ep_read(_package_dir.c_str(), offset, size, buf);
 	offset += size;
-	if (strcmp(buf, EP_PACKAGE_SIGN) != 0)
-		goto EP_ERROR;
-	EP_SAFE_DELETE_ARR(buf);
+	if (strcmp(buf, EP_PACKAGE_SIGN) != 0) {
+		EP_SAFE_DELETE_ARR(buf);
+		return -1;
+	}
 
 	// read ep_package version
 	size = EP_VERSION_LENGTH;
 	buf = new char[size];
 	ep_read(_package_dir.c_str(), offset, size, buf);
 	offset += size;
-	if (strcmp(buf, EP_VERSION) != 0)
-		goto EP_ERROR;
-	EP_SAFE_DELETE_ARR(buf);
+	if (strcmp(buf, EP_VERSION) != 0) {
+		EP_SAFE_DELETE_ARR(buf);
+		return -1;
+	}
 
 	// ep_header
 	size = sizeof(EPHeader);
@@ -77,7 +79,8 @@ int ep_package::parse_package()
 
 		// EPFileEntityEx		-- EPFileEntity
 		if (ep_read(_package_dir.c_str(), offset, file_entity_size, buf) != 0){
-			break; goto EP_ERROR;
+			EP_SAFE_DELETE_ARR(buf);
+			return -1;
 		}
 		EPFileEntityEx file_entity_ex;
 		EPFileEntity* p_file_entity = (EPFileEntity*)buf;
@@ -97,7 +100,8 @@ int ep_package::parse_package()
 		uLongf relative_size = file_entity_ex.relative_path_size;
 		buf = new char[compress_path_size];
 		if (ep_read(_package_dir.c_str(), offset, file_entity_ex.compress_relative_path_size, buf) != 0) {
-			break; goto EP_ERROR;
+			EP_SAFE_DELETE_ARR(buf);
+			return -1;
 		}
 		uncompress((Bytef*)file_entity_ex.relative_path, &relative_size, (Bytef*)buf, compress_path_size);
 		EP_SAFE_DELETE_ARR(buf);
@@ -110,9 +114,6 @@ int ep_package::parse_package()
 	}
 
 	return 0;
-EP_ERROR:
-	EP_SAFE_DELETE_ARR(buf);
-	return -1;
 }
 
 const MAP_EP_FILE_ENTITY_EX& ep_package::get_ep_file_info() const
