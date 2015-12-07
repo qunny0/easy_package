@@ -18,8 +18,6 @@ extern int ep_write(const char* path, const char* mode, unsigned long offset, un
 
 extern int ep_clear_file(const char* path);
 
-extern void ep_output(const char* format, ...);
-
 // extern void ep_compress(char* dest_buf, unsigned long* dest_size, const char* src_buf, unsigned long src_len);
 
 extern uint64_t ep_bkdr_hash(const char* key, uint32_t seed);

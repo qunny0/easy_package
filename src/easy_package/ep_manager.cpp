@@ -22,9 +22,9 @@ ep_manager::~ep_manager()
 
 void ep_manager::show_tips()
 {
-	const char tips[] = "pack \t[package dir]\t[dir][a, w]\n \
-		parse \t[package dir]\t \
-		export \t[package dir] \t[export dir]" ;
+	const char tips[] = "pack \t[achieve_name...] [dir]\n\
+parse \t[achieve_name...]\t\n\
+export \t[achieve_name...] [dir]\n" ;
 
 	printf("%s", tips);
 }

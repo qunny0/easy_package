@@ -25,8 +25,6 @@ int dir_valid(const char* dir, int mode)
 		return -1;
 	}
 	return 0;
-
-// 	SetEndOfFile()
 }
 
 int ep_mk_dir(const char* dir)
@@ -55,18 +53,13 @@ int ep_mk_dir(const char* dir)
 	return 0;
 }
 
-int ep_output_to_console(const char* format, va_list arglist)
-{
-	return 0;
-}
-
-void ep_output(const char* format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	ep_output_to_console(format, args);
-	va_end(args);
-}
+// void ep_output(const char* format, ...)
+// {
+// 	va_list args;
+// 	va_start(args, format);
+// 	ep_output_to_console(format, args);
+// 	va_end(args);
+// }
 
 int ep_read(const char* path, unsigned long offset, unsigned long size, char* out_buf)
 {
@@ -160,15 +153,6 @@ int ep_set_file_length(const char* path, uint32_t len)
 	FILE* file = fopen(path, "ab");
 	if (file)
 	{
-// 		int ret = fseek(file, 0, SEEK_END);
-// 		uint32_t length = ftell(file);
-// 		// truncate
-// 		if (len < length)
-// 		{
-// 			int fd = _fileno(file);
-// 			HANDLE hfile = (HANDLE)_get_osfhandle(fd);
-// 			ret =  SetEndOfFile(hfile);
-// 		}
 		fseek(file, len, SEEK_SET);
 		int fd = _fileno(file);
 		HANDLE hfile = (HANDLE)_get_osfhandle(fd);

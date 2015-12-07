@@ -29,3 +29,4 @@ to-do
 ·RAII，替代goto。需要研究新特性
 ·设计命令行
 ·iOS和Android下生成可执行的package程序和reader静态库
+
