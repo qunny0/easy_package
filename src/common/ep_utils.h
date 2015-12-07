@@ -1,15 +1,19 @@
-#ifndef EP_UTILS
+ï»¿#ifndef EP_UTILS
 #define EP_UTILS
+
+#ifdef __cplusplus 
+extern "C" {
+#endif 
 
 #include <stdio.h>
 #include <stdint.h>
 
 #ifdef _WIN32
-	#define ACCESS(dir, mode)  _access(dir, mode)
-	#define MKDIR(dir) _mkdir(dir)
+#define ACCESS(dir, mode)  _access(dir, mode)
+#define MKDIR(dir) _mkdir(dir)
 #else
-	#define ACCESS(dir, mode)  access(dir, mode)
-	#define MKDIR(dir) mkdir(dir, 0755)
+#define ACCESS(dir, mode)  access(dir, mode)
+#define MKDIR(dir) mkdir(dir, 0755)
 #endif
 
 extern int is_dir(const char* path);
@@ -21,18 +25,19 @@ extern int ep_mk_dir(const char* dir);
 
 extern int ep_read(const char* path, unsigned long offset, unsigned long size, char* out_buf);
 
-// mode : "a" "w"
 extern int ep_write(const char* path, const char* mode, unsigned long offset, unsigned long size, const char* in_buf);
 
 extern int ep_clear_file(const char* path);
-
-// extern void ep_compress(char* dest_buf, unsigned long* dest_size, const char* src_buf, unsigned long src_len);
 
 extern uint64_t ep_bkdr_hash(const char* key, uint32_t seed);
 
 extern int ep_set_file_length(const char* path, uint32_t len);
 
-// to-do
-// 1. ¿É±ä²ÎÊı£¬»ñÈ¡¸÷¸ö²ÎÊı va_list
+	// to-do
+	// 1. å¯å˜å‚æ•°ï¼Œè·å–å„ä¸ªå‚æ•° va_list
+#ifdef __cplusplus 
+}
+#endif
+
 
 #endif

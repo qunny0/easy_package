@@ -1,7 +1,6 @@
 #include "ep_manager.h"
 
-#include <map>
-#include <time.h>
+#include <stdio.h>
 
 #define COMMAND_PACK	"pack"
 #define COMMAND_PARSE	"parse"
@@ -47,6 +46,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	printf("Press Enter To Exit!\n");
 	getchar();
 	return 0;
 }

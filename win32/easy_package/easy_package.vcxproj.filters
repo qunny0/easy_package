@@ -23,7 +23,7 @@
     <ClCompile Include="..\..\src\easy_package\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\common\ep_utils.cpp">
+    <ClCompile Include="..\..\src\common\ep_utils.c">
       <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>

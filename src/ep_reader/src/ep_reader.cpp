@@ -1,9 +1,10 @@
 #include "ep_reader.h"
 #include "ep_package.h"
-#include "ep_utils.h"
 #include "zlib.h"
 #include <vector>
 #include <string>
+
+#include "ep_utils.h"
 
 ep_reader* ep_reader::create_ep_reader(const char* package_dir)
 {

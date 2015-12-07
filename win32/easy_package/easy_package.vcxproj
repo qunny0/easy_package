@@ -91,7 +91,7 @@
     <None Include="..\ep_reader\ep_reader.vcxproj" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\common\ep_utils.cpp" />
+    <ClCompile Include="..\..\src\common\ep_utils.c" />
     <ClCompile Include="..\..\src\easy_package\ep_manager.cpp" />
     <ClCompile Include="..\..\src\easy_package\main.cpp" />
   </ItemGroup>

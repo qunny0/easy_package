@@ -1,4 +1,4 @@
-#include "ep_utils.h"
+﻿#include "ep_utils.h"
 #include <sys/stat.h>
 #include <stdarg.h>
 #include <errno.h>
@@ -10,7 +10,6 @@
 #include <sys/stat.h>
 #endif
 
-#include "ep_define.h"
 #include "zlib.h"
 
 int is_dir(const char* path)
@@ -24,7 +23,8 @@ int is_dir(const char* path)
 
 int dir_valid(const char* dir, int mode)
 {
-	if (int ret = ACCESS(dir, mode) == -1)
+	int ret = ACCESS(dir, mode);
+	if (ret == -1)
 	{
 		return -1;
 	}
@@ -33,41 +33,41 @@ int dir_valid(const char* dir, int mode)
 
 int ep_mk_dir(const char* dir)
 {
-	// to-do: optimize
-	std::string str_dir = dir;
+	// 
+	uint32_t len = strlen(dir);
+	char* psz_dir = malloc(len+2);
+	strcpy(psz_dir, dir);
 
-	// dir exist
-	if (is_dir(str_dir.c_str()) == 0)
+	if (psz_dir[len-1] != '/' && psz_dir[len-2] != '\\')
 	{
-		return 0;
+		psz_dir[len] = '/';
+		psz_dir[++len] = '\0';
 	}
-	else
+
+	for (uint32_t i = 0; i < len; i++)
 	{
-		std::string str_parent_dir = str_dir.substr(0, str_dir.rfind('\\'));
-		ep_mk_dir(str_parent_dir.c_str());
-		if (MKDIR(str_dir.c_str()) != 0)
+		if (psz_dir[i] == '\\' || psz_dir[i] == '/')
 		{
-			if (errno == EEXIST)
-				return 0;
-			else if (errno == ENOENT)
-				return 1;
+			psz_dir[i] = '\0';
+			int ret = dir_valid(psz_dir, 0);
+			if (ret != 0)
+			{
+				ret = MKDIR(psz_dir);
+				if (ret != 0)
+				{
+					return -1;
+				}
+			}
+			psz_dir[i] = '/';
 		}
 	}
 
 	return 0;
 }
 
-// void ep_output(const char* format, ...)
-// {
-// 	va_list args;
-// 	va_start(args, format);
-// 	ep_output_to_console(format, args);
-// 	va_end(args);
-// }
-
 int ep_read(const char* path, unsigned long offset, unsigned long size, char* out_buf)
 {
-	FILE* file = fopen(path, EP_PACK_MODE_READ);
+	FILE* file = fopen(path, "rb");
 	if (!file)  {
 		goto EP_ERROR;
 	}
