@@ -1,9 +1,7 @@
 #include "ep_manager.h"
 
-#include "ep_utils.h"
 #include "ep_reader.h"
 #include "ep_writer.h"
-#include "zlib.h"
 
 #include <time.h>
 
@@ -15,8 +13,8 @@ ep_manager::ep_manager()
 
 ep_manager::~ep_manager()
 {
-	EP_SAFE_DELETE(_reader);
-	EP_SAFE_DELETE(_ep_writer);
+	// EP_SAFE_DELETE(_reader);
+	// EP_SAFE_DELETE(_ep_writer);
 }
 
 void ep_manager::show_tips()

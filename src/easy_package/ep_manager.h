@@ -17,8 +17,6 @@ public:
 
 	void show_tips();
 
-// 	int analyze_dir(const std::string dir);
-
 private:
 	IEP_READER*					_reader;
 	IEP_WRITER*					_ep_writer;

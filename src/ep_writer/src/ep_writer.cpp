@@ -12,7 +12,6 @@
 
 ep_writer::ep_writer()
 {
-
 }
 
 ep_writer::~ep_writer()
@@ -22,7 +21,6 @@ ep_writer::~ep_writer()
 
 int ep_writer::package_dir(const char* pkg_dir, const char* file_dir, const char mode)
 {
-	printf("package_dir %s\n", pkg_dir);
 	_file_root_dir = file_dir;
 
 	_p_ep_package = ep_package::create_package(pkg_dir);
@@ -132,8 +130,6 @@ long ep_writer::write_package_header(long offset)
 
 	bool pkg_exist = dir_valid(package_dir, 0) == 0;
 
-	printf("ep_writer write_package_header\n");
-
 	if (!pkg_exist)
 	{
 
@@ -224,6 +220,8 @@ long ep_writer::update_package(long offset)
 int ep_writer::write_dir_to_package(long offset)
 {
 	const char* package_dir = _p_ep_package->_package_dir.c_str();
+
+	uint32_t t_size = _map_ep_files_to_pack.size();
 
 	// file data
 	const unsigned int ep_file_entity_size = sizeof(EPFileEntity);
