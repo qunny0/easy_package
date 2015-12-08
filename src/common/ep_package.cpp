@@ -34,6 +34,8 @@ int ep_package::parse(const char* package_dir)
 		return parse_package();
 	}
 
+	printf("ep_package parse %s\n", package_dir);
+
 	return 0;
 }
 

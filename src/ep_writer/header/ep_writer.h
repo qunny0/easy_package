@@ -8,7 +8,7 @@ class ep_writer : public IEP_WRITER
 {
 public:
 	ep_writer();
-	~ep_writer();
+	virtual ~ep_writer();
 
 	virtual int package_dir(const char* pkg_dir, const char* file_dir, const char mode);
 

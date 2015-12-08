@@ -6,6 +6,7 @@ CRV = crv
 
 CPPFLAGS = 	-I ./src/ep_writer/header \
 			-I ./src/ep_reader/header \
+			-I ./src/easy_package	\
 			-I ./src/common
 
 # OBJ = main.o ep_manager.o
@@ -36,13 +37,20 @@ CPPFLAGS = 	-I ./src/ep_writer/header \
 # libep_reader.a: $(LIBOBJ_R)
 # 	ar crv libep_reader.a $(LIBOBJ_R) -L. -lz
 
+# ./ep_package /Users/fubei/Desktop/ep_test.ep /Users/fubei/Parkour/project/Parkour/Run/client/iPhone/armatures
+
+OBJ_P = ep_manager.o main.o
 OBJ_W = ep_package.o ep_writer.o ep_utils.o
 OBJ_R = ep_package.o ep_reader.o ep_utils.o
 
-vpath %.cpp ./src/ep_writer/src ./src/common ./src/ep_reader/src
+vpath %.cpp ./src/ep_writer/src \
+			./src/common \
+			./src/ep_reader/src \
+			./src/easy_package
 vpath %.c  ./src/common
 
-main:ep_writer ep_reader
+ep_package:ep_writer ep_reader $(OBJ_P)
+	$(CC) $(OBJ_P) -o ep_package -L. -lep_writer -lep_reader -lz -lstdc++
 
 ep_writer:$(OBJ_W)
 	$(AR) $(CRV) libep_writer.a $(OBJ_W)

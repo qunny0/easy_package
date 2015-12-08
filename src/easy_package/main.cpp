@@ -11,6 +11,9 @@
 // parse C:\Users\Administrator\Desktop\ep_test.ep
 // export C:\Users\Administrator\Desktop\ep_test.ep C:\Users\Administrator\Desktop\export
 
+// ./ep_package pack /Users/fubei/Desktop/ep_test.ep /Users/fubei/Parkour/project/Parkour/Run/client/iPhone/armatures
+
+
 int main(int argc, char* argv[])
 {
 	ep_manager manager;

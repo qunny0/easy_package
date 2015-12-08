@@ -22,6 +22,7 @@ ep_writer::~ep_writer()
 
 int ep_writer::package_dir(const char* pkg_dir, const char* file_dir, const char mode)
 {
+	printf("package_dir %s\n", pkg_dir);
 	_file_root_dir = file_dir;
 
 	_p_ep_package = ep_package::create_package(pkg_dir);
@@ -131,8 +132,11 @@ long ep_writer::write_package_header(long offset)
 
 	bool pkg_exist = dir_valid(package_dir, 0) == 0;
 
+	printf("ep_writer write_package_header\n");
+
 	if (!pkg_exist)
 	{
+
 		// package sign
 		printf("package sign...\n");
 		EP_WRITE(package_dir, EP_PACK_MODE_WRITE, offset, EP_SIGN_LENGTH, EP_PACKAGE_SIGN);

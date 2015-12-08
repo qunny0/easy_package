@@ -30,6 +30,7 @@ export \t[achieve_name...] [dir]\n" ;
 
 int ep_manager::package(const char* package_dir, const char* dir, const char* mode)
 {
+	printf("ep_manager package %d\n", _ep_writer);
 	return _ep_writer->package_dir(package_dir, dir, mode[0]);
 }
 
@@ -42,10 +43,6 @@ int ep_manager::parse_package(const char* package_path)
 
 int ep_manager::package_export(const char* package_dir, const char* export_dir)
 {
-	long size = ep_get_file_size("C:\\Users\\Administrator\\Desktop\\1.txt");
-
-	return 0;
-
 	time_t pre_time, aft_time;
 	
 	time(&pre_time);

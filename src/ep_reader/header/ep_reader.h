@@ -16,7 +16,7 @@ public:
 
 protected:
 	ep_reader();
-	~ep_reader();
+	virtual ~ep_reader();
 
 	bool init(const char* pkg_dir);
 
