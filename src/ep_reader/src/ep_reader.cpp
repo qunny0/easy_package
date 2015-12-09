@@ -41,6 +41,7 @@ void ep_reader::show_all_file_path() const
 	MAP_EP_FILE_ENTITY_EX_CONST_ITERATOR it_end = map_file_info.end();
 	while (it != it_end)
 	{
+		printf("%s\n", it->second.relative_path);
 		++it;
 	}
 }

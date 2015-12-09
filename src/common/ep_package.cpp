@@ -28,13 +28,14 @@ int ep_package::parse(const char* package_dir)
 	_package_dir = package_dir;
 
 	bool pkg_exist = dir_valid(package_dir, 0) == 0;
-	
+
 	if (pkg_exist)
 	{
+
+		// printf("ep_package parse %s\n", package_dir);
+
 		return parse_package();
 	}
-
-	printf("ep_package parse %s\n", package_dir);
 
 	return 0;
 }
@@ -53,6 +54,7 @@ int ep_package::parse_package()
 		EP_SAFE_DELETE_ARR(buf);
 		return -1;
 	}
+	printf("sign %s\n", buf);
 
 	// read ep_package version
 	size = EP_VERSION_LENGTH;
@@ -63,6 +65,7 @@ int ep_package::parse_package()
 		EP_SAFE_DELETE_ARR(buf);
 		return -1;
 	}
+	printf("EP_VERSION %s\n", buf);
 
 	// ep_header
 	size = sizeof(EPHeader);
@@ -77,6 +80,8 @@ int ep_package::parse_package()
 	unsigned int file_entity_size = sizeof(EPFileEntity);
 	while (offset < package_size)
 	{
+		printf("offset package_size %d %d\n", offset, package_size);
+
 		buf = new char[file_entity_size];
 
 		// EPFileEntityEx		-- EPFileEntity

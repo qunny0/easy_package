@@ -13,7 +13,7 @@ public:
 	virtual int package_dir(const char* pkg_dir, const char* file_dir, const char mode);
 
 protected:
-	int analyze_dir(const std::string dir);
+	int analyze_dir(const std::string path, int level);
 
 	void new_a_file_entity(const char* file_relative_path, const uint32_t file_size);
 

@@ -4,6 +4,8 @@
 #else
 	#include <unistd.h>
 	#include <stdio.h>
+    #include <dirent.h>
+    #include <sys/stat.h>
 #endif
 #include <time.h>
 #include "ep_utils.h"
@@ -29,7 +31,7 @@ int ep_writer::package_dir(const char* pkg_dir, const char* file_dir, const char
 	if (!_p_ep_package)
 		return -1;
 	
-	if (analyze_dir(file_dir) != 0)
+	if (analyze_dir(file_dir, 0) != 0)
 		return -1;
 
 	time_t pre_time, aft_time;
@@ -44,32 +46,65 @@ int ep_writer::package_dir(const char* pkg_dir, const char* file_dir, const char
 	return 0;
 }
 
-int ep_writer::analyze_dir(const std::string dir)
+int ep_writer::analyze_dir(const std::string path, int level)
 {
 #ifdef _WIN32
 	_finddata_t findData;
-	std::string findPath = dir + "\\*";
+	std::string findPath = path + "\\*";
 	long handle = _findfirst(findPath.c_str(), &findData);
 
 	do
 	{
-		// sub dir
+		// sub path
 		if ((findData.attrib & _A_SUBDIR))
 		{
 			if (strcmp(findData.name, ".") != 0 && strcmp(findData.name, "..") != 0)
 			{
-				analyze_dir(dir + "\\" + findData.name);
+				analyze_dir(path + "\\" + findData.name, level+1);
 			}
 		}
 		else
 		{
-			std::string file_absolute_path = dir + "\\" + findData.name;
+			std::string file_absolute_path = path + "\\" + findData.name;
 			std::string file_relative_path = file_absolute_path.substr(_file_root_dir.length() + 1, file_absolute_path.length() - _file_root_dir.length());
 			new_a_file_entity(file_relative_path.c_str(), findData.size);
 		}
 	} while (_findnext(handle, &findData) == 0);
 
 	_findclose(handle);
+    
+#else
+   	DIR* dir;
+   	struct dirent* entry;
+
+   	// if (!(dir = opendir(path.c_str())) || !(entry = readdir(dir)))
+   	// 	return 0;
+   	if (!(dir = opendir(path.c_str())))
+   		return 0;
+   	if (!(entry = readdir(dir)))
+   		return 0;
+
+   	do {
+   		if (entry->d_type == DT_DIR)
+   		{
+   			if (strcmp(".", entry->d_name) == 0 || strcmp("..", entry->d_name) == 0)
+   				continue;
+
+   			char next_path[1024] = {};
+   			snprintf(next_path, sizeof(next_path)-1, "%s/%s", path.c_str(), entry->d_name);
+   			// printf("%s %*s[%s]\n", next_path, level*2, "", entry->d_name);
+   			analyze_dir(next_path, level+1);
+   		}
+   		else
+   		{
+   			std::string file_absolute_path = path + "/" + entry->d_name;
+   			std::string file_relative_path = file_absolute_path.substr(_file_root_dir.length() + 1, file_absolute_path.length() - _file_root_dir.length());
+   			uint32_t file_size = ep_get_file_size(file_absolute_path.c_str());
+			new_a_file_entity(file_relative_path.c_str(), file_size);
+   		}
+   	}while(entry = readdir(dir));
+   	closedir(dir);
+
 #endif
 
 	return 0;
